@@ -45,19 +45,67 @@
     .button:hover {
       background-color: #449400;
     }
+
+    #user-info {
+      margin-top: 40px;
+    }
+
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 60%;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .preloader {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Welcome to GitHub Algol22</h1>
     <p>Explore the amazing world of Algol22 on GitHub.</p>
-    <div id="user-info">
-      <p>Loading user information...</p>
-    </div>
+    <div id="preloader" class="preloader"></div>
+    <div id="user-info"></div>
     <a href="#" class="button">Get Started</a>
   </div>
 
   <script>
+    const preloader = document.getElementById('preloader');
+    const userInfoDiv = document.getElementById('user-info');
+
+    // Show preloader
+    function showPreloader() {
+      preloader.style.display = 'inline-block';
+    }
+
+    // Hide preloader
+    function hidePreloader() {
+      preloader.style.display = 'none';
+    }
+
     // Fetch user information
     fetch('https://api.ipify.org?format=json')
       .then(response => response.json())
@@ -67,29 +115,48 @@
           .then(response => response.json())
           .then(user => {
             displayUserInfo(user);
+            hidePreloader();
           })
           .catch(error => {
             displayError(error);
+            hidePreloader();
           });
       })
       .catch(error => {
         displayError(error);
+        hidePreloader();
       });
 
     // Display user information
     function displayUserInfo(user) {
-      const userInfoDiv = document.getElementById('user-info');
-      userInfoDiv.innerHTML = `
-        <p>Browser: ${navigator.userAgent}</p>
-        <p>Country: ${user.country_name}</p>
-        <p>City: ${user.city}</p>
-        <p>IP: ${user.ip}</p>
+      const table = document.createElement('table');
+      table.innerHTML = `
+        <tr>
+          <th>Property</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>Browser</td>
+          <td>${navigator.userAgent}</td>
+        </tr>
+        <tr>
+          <td>Country</td>
+          <td>${user.country_name}</td>
+        </tr>
+        <tr>
+          <td>City</td>
+          <td>${user.city}</td>
+        </tr>
+        <tr>
+          <td>IP</td>
+          <td>${user.ip}</td>
+        </tr>
       `;
+      userInfoDiv.appendChild(table);
     }
 
     // Display error message
     function displayError(error) {
-      const userInfoDiv = document.getElementById('user-info');
       userInfoDiv.innerHTML = `<p>Failed to fetch user information: ${error.message}</p>`;
     }
   </script>
