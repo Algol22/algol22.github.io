@@ -11,116 +11,74 @@
       font-size: 9pt;
       padding: 0px;
       margin: 0px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
 
-    table {
-      font-family: Verdana, Arial;
-      font-size: 10px;
+    .container {
+      text-align: center;
     }
 
-    form {
-      padding: 0px;
-      margin: 0px;
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
-    .form2 {
-      background: #222;
-      border: 0px;
+    p {
+      font-size: 18px;
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
-    .inf {
-      background: #262626;
-      padding: 5px;
-      color: #666;
-      width: 36%;
-    }
-
-    input,
-    select {
-      background: #292929;
-      padding: 2px;
-      font-size: 10px;
-      border: 1px solid #444;
-      font-family: Verdana;
-      color: #888;
-    }
-
-    textarea {
-      background: #292929;
-      padding: 10px;
-      font-size: 10px;
-      border: 1px solid #444;
-      font-family: Verdana;
-      color: #888;
-    }
-
-    a {
-      font-size: 10px;
-      font-family: Verdana;
-      color: #999;
-      font-weight: bold;
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #55c500;
+      color: #fff;
+      font-size: 16px;
       text-decoration: none;
-    }
-
-    a:hover {
-      color: yellowgreen;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
     .button:hover {
-      border-color: yellowgreen;
-    }
-
-    #styleload {
-      font-size: 8pt;
-      font-family: Verdana;
-      color: #555;
-      text-decoration: none;
-    }
-
-    #divnew {
-      display: none;
-      position: absolute;
-      top: 55;
-      right: 0;
-      padding: 5px;
-      padding-left: 10px;
-      font-size: 9px;
-    }
-
-    .fx:hover {
-      color: yellowgreen;
-      background-color: #444;
-    }
-
-    .fx {
-      display: flex;
-      right: 0;
-      margin-top: 10px;
-      cursor: pointer;
-      font-weight: bold;
-      padding: 5px;
-      background: #333;
-    }
-
-    .fxx {
-    }
-
-    .main.link {
-      position: absolute;
-      top: 10;
-      right: 0;
-      padding: 5px;
-      padding-left: 10px;
-      font-size: 9px;
-      background: #333;
-      border-radius: 50%;
+      background-color: #449400;
     }
   </style>
 </head>
 <body>
-  <!-- Your landing page content here -->
-  <h1>Welcome to GitHub Algol22</h1>
-  <p>Explore the amazing world of Algol22 on GitHub.</p>
-  <a href="#" class="button">Get Started</a>
+  <div class="container">
+    <h1>Welcome to GitHub Algol22</h1>
+    <p>Explore the amazing world of Algol22 on GitHub.</p>
+    <a href="#" class="button">Get Started</a>
+  </div>
+
+  <script>
+    const heading = document.querySelector("h1");
+    const paragraph = document.querySelector("p");
+    const button = document.querySelector(".button");
+
+    function animateElements() {
+      heading.style.opacity = "1";
+      heading.style.transform = "translateY(0)";
+      paragraph.style.opacity = "1";
+      paragraph.style.transform = "translateY(0)";
+      button.style.opacity = "1";
+      button.style.transform = "translateY(0)";
+    }
+
+    // Animate elements when the page loads
+    window.addEventListener("load", animateElements);
+  </script>
 </body>
 </html>
