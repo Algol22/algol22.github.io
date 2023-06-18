@@ -51,43 +51,47 @@
   <div class="container">
     <h1>Welcome to GitHub Algol22</h1>
     <p>Explore the amazing world of Algol22 on GitHub.</p>
-    <p id="clientInfo"></p>
+    <div id="user-info">
+      <p>Loading user information...</p>
+    </div>
     <a href="#" class="button">Get Started</a>
   </div>
 
   <script>
-    function getClientInfo() {
-      const clientInfoElement = document.getElementById("clientInfo");
+    // Fetch user information
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        const { ip } = data;
+        fetch(`https://ipapi.co/${ip}/json/`)
+          .then(response => response.json())
+          .then(user => {
+            displayUserInfo(user);
+          })
+          .catch(error => {
+            displayError(error);
+          });
+      })
+      .catch(error => {
+        displayError(error);
+      });
 
-      // Get browser information
-      const browser = {
-        name: window.navigator.appName,
-        version: window.navigator.appVersion,
-        platform: window.navigator.platform,
-        userAgent: window.navigator.userAgent,
-      };
-
-      // Get country information (using freegeoip.app API)
-      fetch("https://freegeoip.app/json/")
-        .then(response => response.json())
-        .then(data => {
-          const country = data.country_name;
-          const ip = data.ip;
-
-          // Display client information
-          clientInfoElement.innerHTML = `Browser: ${browser.name} (${browser.version})<br>
-                                          Platform: ${browser.platform}<br>
-                                          Country: ${country}<br>
-                                          IP: ${ip}`;
-        })
-        .catch(error => {
-          console.log("Error fetching country information:", error);
-          clientInfoElement.innerHTML = "Failed to fetch client information.";
-        });
+    // Display user information
+    function displayUserInfo(user) {
+      const userInfoDiv = document.getElementById('user-info');
+      userInfoDiv.innerHTML = `
+        <p>Browser: ${navigator.userAgent}</p>
+        <p>Country: ${user.country_name}</p>
+        <p>City: ${user.city}</p>
+        <p>IP: ${user.ip}</p>
+      `;
     }
 
-    // Call the function to display client information
-    getClientInfo();
+    // Display error message
+    function displayError(error) {
+      const userInfoDiv = document.getElementById('user-info');
+      userInfoDiv.innerHTML = `<p>Failed to fetch user information: ${error.message}</p>`;
+    }
   </script>
 </body>
 </html>
