@@ -56,7 +56,8 @@
       width: 60%;
     }
 
-    th, td {
+    th,
+    td {
       padding: 8px;
       text-align: left;
       border-bottom: 1px solid #ddd;
@@ -78,8 +79,12 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
@@ -131,26 +136,28 @@
     function displayUserInfo(user) {
       const table = document.createElement('table');
       table.innerHTML = `
-        <tr>
-          <th>Property</th>
-          <th>Value</th>
-        </tr>
-        <tr>
-          <td>Browser</td>
-          <td>${navigator.userAgent}</td>
-        </tr>
-        <tr>
-          <td>Country</td>
-          <td>${user.country_name}</td>
-        </tr>
-        <tr>
-          <td>City</td>
-          <td>${user.city}</td>
-        </tr>
-        <tr>
-          <td>IP</td>
-          <td>${user.ip}</td>
-        </tr>
+        <tbody>
+          <tr>
+            <th width="40%">Property</th>
+            <th width="60%">Value</th>
+          </tr>
+          <tr>
+            <td>Browser</td>
+            <td>${navigator.userAgent}</td>
+          </tr>
+          <tr>
+            <td>Country</td>
+            <td>${user.country_name}</td>
+          </tr>
+          <tr>
+            <td>City</td>
+            <td>${user.city}</td>
+          </tr>
+          <tr>
+            <td>IP</td>
+            <td>${user.ip}</td>
+          </tr>
+        </tbody>
       `;
       userInfoDiv.appendChild(table);
     }
