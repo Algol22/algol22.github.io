@@ -51,7 +51,43 @@
   <div class="container">
     <h1>Welcome to GitHub Algol22</h1>
     <p>Explore the amazing world of Algol22 on GitHub.</p>
+    <p id="clientInfo"></p>
     <a href="#" class="button">Get Started</a>
   </div>
+
+  <script>
+    function getClientInfo() {
+      const clientInfoElement = document.getElementById("clientInfo");
+
+      // Get browser information
+      const browser = {
+        name: window.navigator.appName,
+        version: window.navigator.appVersion,
+        platform: window.navigator.platform,
+        userAgent: window.navigator.userAgent,
+      };
+
+      // Get country information (using freegeoip.app API)
+      fetch("https://freegeoip.app/json/")
+        .then(response => response.json())
+        .then(data => {
+          const country = data.country_name;
+          const ip = data.ip;
+
+          // Display client information
+          clientInfoElement.innerHTML = `Browser: ${browser.name} (${browser.version})<br>
+                                          Platform: ${browser.platform}<br>
+                                          Country: ${country}<br>
+                                          IP: ${ip}`;
+        })
+        .catch(error => {
+          console.log("Error fetching country information:", error);
+          clientInfoElement.innerHTML = "Failed to fetch client information.";
+        });
+    }
+
+    // Call the function to display client information
+    getClientInfo();
+  </script>
 </body>
 </html>
