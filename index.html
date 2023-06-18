@@ -19,15 +19,16 @@
 
     .container {
       text-align: center;
+      padding: 0 20px;
     }
 
     h1 {
-      font-size: 36px;
+      font-size: 24px;
       margin-bottom: 20px;
     }
 
     p {
-      font-size: 18px;
+      font-size: 14px;
       margin-bottom: 40px;
     }
 
@@ -48,12 +49,14 @@
 
     #user-info {
       margin-top: 40px;
+      overflow-x: auto;
     }
 
     table {
       margin: 0 auto;
       border-collapse: collapse;
-      width: 60%;
+      width: 100%;
+      max-width: 400px;
     }
 
     th,
@@ -84,6 +87,20 @@
       }
       100% {
         transform: rotate(360deg);
+      }
+    }
+
+    @media only screen and (max-width: 480px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      p {
+        font-size: 12px;
+      }
+
+      table {
+        font-size: 8px;
       }
     }
   </style>
@@ -118,28 +135,21 @@
         const { ip } = data;
         fetch(`https://ipapi.co/${ip}/json/`)
           .then(response => response.json())
-          .then(user => {
-            displayUserInfo(user);
-            hidePreloader();
-          })
-          .catch(error => {
-            displayError(error);
-            hidePreloader();
-          });
+          .then(user => displayUserInfo(user))
+          .catch(error => displayError(error));
       })
-      .catch(error => {
-        displayError(error);
-        hidePreloader();
-      });
+      .catch(error => displayError(error));
 
     // Display user information
     function displayUserInfo(user) {
+      hidePreloader();
+
       const table = document.createElement('table');
       table.innerHTML = `
         <tbody>
           <tr>
-            <th width="40%">Property</th>
-            <th width="60%">Value</th>
+            <th>Property</th>
+            <th>Value</th>
           </tr>
           <tr>
             <td>Browser</td>
@@ -164,6 +174,7 @@
 
     // Display error message
     function displayError(error) {
+      hidePreloader();
       userInfoDiv.innerHTML = `<p>Failed to fetch user information: ${error.message}</p>`;
     }
   </script>
