@@ -1,182 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>GitHub Algol22</title>
-  <style>
-    body {
-      background-color: #222;
-      color: #999;
-      font-family: Verdana;
-      font-size: 9pt;
-      padding: 0px;
-      margin: 0px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name - Digital Haven</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
 
-    .container {
-      text-align: center;
-      padding: 0 20px;
-    }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em 0;
+        }
 
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
+        section {
+            padding: 2em;
+            text-align: center;
+        }
 
-    p {
-      font-size: 14px;
-      margin-bottom: 40px;
-    }
+        h1 {
+            color: #333;
+        }
 
-    .button {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #55c500;
-      color: #fff;
-      font-size: 16px;
-      text-decoration: none;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
-    }
+        p {
+            font-size: 1.2em;
+            line-height: 1.6em;
+            color: #555;
+        }
 
-    .button:hover {
-      background-color: #449400;
-    }
+        .highlight {
+            color: #4CAF50;
+            font-weight: bold;
+        }
 
-    #user-info {
-      margin-top: 40px;
-      overflow-x: auto;
-    }
-
-    table {
-      margin: 0 auto;
-      border-collapse: collapse;
-      width: 100%;
-      max-width: 400px;
-    }
-
-    th,
-    td {
-      padding: 8px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    th {
-      background-color: #333;
-      color: #fff;
-    }
-
-    .preloader {
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #3498db;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    @media only screen and (max-width: 480px) {
-      h1 {
-        font-size: 20px;
-      }
-
-      p {
-        font-size: 12px;
-      }
-
-      table {
-        font-size: 8px;
-      }
-    }
-  </style>
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome to GitHub Algol22</h1>
-    <p>Explore the amazing world of Algol22 on GitHub.</p>
-    <div id="preloader" class="preloader"></div>
-    <div id="user-info"></div>
-    <a href="#" class="button">Get Started</a>
-  </div>
 
-  <script>
-    const preloader = document.getElementById('preloader');
-    const userInfoDiv = document.getElementById('user-info');
+    <header>
+        <h1>[Your Name]'s Digital Haven</h1>
+    </header>
 
-    // Show preloader
-    function showPreloader() {
-      preloader.style.display = 'inline-block';
-    }
+    <section>
+        <h2>Academic Prowess</h2>
+        <p>Hold tight as I take you through my journey of mastering the digital realm. Armed with a degree in <span class="highlight">Computer Engineering</span>, I have honed my skills in cutting-edge technologies, gearing up to revolutionize the tech landscape.</p>
+    </section>
 
-    // Hide preloader
-    function hidePreloader() {
-      preloader.style.display = 'none';
-    }
+    <section>
+        <h2>Professional Odyssey</h2>
+        <p>Embark on a voyage through my professional history, where I have left my mark at global powerhouses such as <span class="highlight">Deloitte</span> and <span class="highlight">PwC</span>. At Deloitte, I pioneered tech-driven strategies, and at PwC, I brought synergy between technology and financial acumen.</p>
+    </section>
 
-    // Fetch user information
-    fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(data => {
-        const { ip } = data;
-        fetch(`https://ipapi.co/${ip}/json/`)
-          .then(response => response.json())
-          .then(user => displayUserInfo(user))
-          .catch(error => displayError(error));
-      })
-      .catch(error => displayError(error));
+    <section>
+        <h2>Tech Wizardry Meets Financial Mastery</h2>
+        <p>Dive into the intersection of my dual expertise—<span class="highlight">Computer Engineering</span> and <span class="highlight">Financial Accounting</span>. Unleashing the power of algorithms to untangle financial complexities, I bring a unique perspective to the digital financial landscape.</p>
+    </section>
 
-    // Display user information
-    function displayUserInfo(user) {
-      hidePreloader();
+    <footer>
+        <p>Let's Connect: <a href="mailto:YourEmail@example.com">YourEmail@example.com</a> | <a href="YourLinkedInProfile">LinkedIn</a> | Phone: <span class="highlight">YourPhoneNumber</span></p>
+    </footer>
 
-      const table = document.createElement('table');
-      table.innerHTML = `
-        <tbody>
-          <tr>
-            <th>Property</th>
-            <th>Value</th>
-          </tr>
-          <tr>
-            <td>Browser</td>
-            <td>${navigator.userAgent}</td>
-          </tr>
-          <tr>
-            <td>Country</td>
-            <td>${user.country_name}</td>
-          </tr>
-          <tr>
-            <td>City</td>
-            <td>${user.city}</td>
-          </tr>
-          <tr>
-            <td>IP</td>
-            <td>${user.ip}</td>
-          </tr>
-        </tbody>
-      `;
-      userInfoDiv.appendChild(table);
-    }
-
-    // Display error message
-    function displayError(error) {
-      hidePreloader();
-      userInfoDiv.innerHTML = `<p>Failed to fetch user information: ${error.message}</p>`;
-    }
-  </script>
 </body>
 </html>
