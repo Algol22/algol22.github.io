@@ -3,9 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPI Payment</title>
+    <title>UPI Payment Button</title>
+    <style>
+        /* Style for the button */
+        #upiPaymentBtn {
+            background-color: #4CAF50; /* Green background */
+            border: none; /* Remove border */
+            color: white; /* White text */
+            padding: 15px 32px; /* Padding */
+            text-align: center; /* Centered text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Display inline */
+            font-size: 16px; /* Increase font size */
+            margin: 4px 2px; /* Add some margin */
+            cursor: pointer; /* Pointer cursor on hover */
+            border-radius: 12px; /* Rounded corners */
+            transition: background-color 0.3s ease; /* Transition effect */
+        }
+
+        /* Hover effect */
+        #upiPaymentBtn:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+    </style>
 </head>
 <body>
-    <p>UPI Payment Link: <a href="upi://pay?pa=PAYTHROUONLINE@ybl&pn=PAYTHROUGH&am=1.00&mam=1.00&tr=o_5g9oAVXKGLDB4qLk-240822115611&tn=Payment%20for%20o_5g9oAVXKGLDB4qLk-240822115611&mc=4814&mode=04&purpose=00&utm_campaign=B2B_PG&utm_medium=PAYTHROUONLINE&utm_source=o_5g9oAVXKGLDB4qLk-240822115611" id="upiLink">Copy this link and paste it in your preferred UPI app.</a></p>
+    <button id="upiPaymentBtn">Pay Now</button>
+
+    <script>
+        document.getElementById("upiPaymentBtn").addEventListener("click", function() {
+            // Redirect to UPI payment link
+            window.location.href = "upi://pay?pa=PAYTHROUONLINE@ybl&pn=PAYTHROUGH&am=1.00&mam=1.00&tr=o_5depdKwngeD2ayGG-240822121605&tn=Payment%20for%20o_5depdKwngeD2ayGG-240822121605&mc=4814&mode=04&purpose=00&utm_campaign=B2B_PG&utm_medium=PAYTHROUONLINE&utm_source=o_5depdKwngeD2ayGG-240822121605";
+        });
+    </script>
 </body>
 </html>
