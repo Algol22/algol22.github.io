@@ -1,68 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPI Payment Options</title>
-    <style>
-        /* Style for the anchor link */
-        #upiPaymentLink {
-            display: inline-block;
-            background-color: #4CAF50; /* Green background */
-            color: white; /* White text */
-            padding: 15px 32px; /* Padding */
-            text-align: center; /* Centered text */
-            text-decoration: none; /* Remove underline */
-            font-size: 16px; /* Increase font size */
-            border-radius: 12px; /* Rounded corners */
-            transition: background-color 0.3s ease; /* Transition effect */
-            margin-bottom: 20px; /* Space between options */
-        }
-
-        #upiPaymentLink:hover {
-            background-color: #45a049; /* Darker green */
-        }
-
-        /* Style for the button */
-        #upiPaymentBtn {
-            background-color: #2196F3; /* Blue background */
-            border: none; /* Remove border */
-            color: white; /* White text */
-            padding: 15px 32px; /* Padding */
-            text-align: center; /* Centered text */
-            text-decoration: none; /* Remove underline */
-            display: inline-block; /* Display inline */
-            font-size: 16px; /* Increase font size */
-            cursor: pointer; /* Pointer cursor on hover */
-            border-radius: 12px; /* Rounded corners */
-            transition: background-color 0.3s ease; /* Transition effect */
-        }
-
-        #upiPaymentBtn:hover {
-            background-color: #1E88E5; /* Darker blue */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Datepicker Demo</title>
+  <!-- Include CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div style="padding: 20px;">
+    <h1>Date Range Picker Demo</h1>
+    <input type="text" id="datepicker" placeholder="Select a date range" />
+  </div>
 
-    <h1>Select a Payment Option</h1>
-
-    <!-- Option 1: Anchor Link -->
-    <a id="upiPaymentLink" href="upi://pay?pa=PAYTHROUONLINE@ybl&pn=PAYTHROUGH&am=1.00&mam=1.00&tr=o_e5byJyEapVNdRzBe-240822121314&tn=Payment%20for%20o_e5byJyEapVNdRzBe-240822121314&mc=4814&mode=04&purpose=00&utm_campaign=B2B_PG&utm_medium=PAYTHROUONLINE&utm_source=o_e5byJyEapVNdRzBe-240822121314">
-        Pay Now (Anchor Link)
-    </a>
-    <br><br>
-    
-    <!-- Option 2: Button with JavaScript -->
-    <button id="upiPaymentBtn">Pay Now (Button)</button>
-
-    <script>
-        document.getElementById("upiPaymentBtn").addEventListener("click", function() {
-            // Redirect to UPI payment link
-            window.location.href = "upi://pay?pa=PAYTHROUONLINE@ybl&pn=PAYTHROUGH&am=1.00&mam=1.00&tr=o_e5byJyEapVNdRzBe-240822121314&tn=Payment%20for%20o_e5byJyEapVNdRzBe-240822121314&mc=4814&mode=04&purpose=00&utm_campaign=B2B_PG&utm_medium=PAYTHROUONLINE&utm_source=o_e5byJyEapVNdRzBe-240822121314";
-        });
-    </script>
-
-    <a href="upi://pay?pa=UPIID@oksbi&amp;pn=FNAME SNAME K&amp;cu=INR" class="upi-pay1">Pay Now !</a>
+  <!-- Include JS Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
