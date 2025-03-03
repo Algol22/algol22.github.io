@@ -3,74 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payer Data</title>
+    <title>QR Payment Information</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-        }
-        h1 {
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
             text-align: center;
-            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
         }
-        .data-item {
-            margin-bottom: 15px;
-        }
-        .data-item label {
-            font-weight: bold;
-        }
-        .qr-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .qr-image {
-            max-width: 300px;
-            width: 100%;
-            border: 1px solid #ccc;
+        .button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Payer Data</h1>
-        <div class="data-item">
-            <label>Status Code: </label>
-            <span>00</span>
-        </div>
-        <div class="data-item">
-            <label>Status Message: </label>
-            <span>Success!</span>
-        </div>
-        <div class="data-item">
-            <label>Transaction ID: </label>
-            <span>As-20250303142605</span>
-        </div>
-        <div class="data-item">
-            <label>Description: </label>
-            <span>Success</span>
-        </div>
-        <div class="data-item">
-            <label>QR String: </label>
-            <span>00020101021230510016abaakhppxxx@abaa01151111111111111110208ABA Bank5204599953038405405100.55802KH5902jp6003N/A6232050701179220717As-2025030314260599520013F1BF016411FDA6814PWOnlinePW-2-06908purchase70010630495CC</span>
-        </div>
-        <div class="qr-container">
-            <label>QR Image: </label>
-            <img class="qr-image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAIAAAD6XpeDAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAgAElEQVR4nO2dd1xUx97wZwssuyxtXVdY6bGBqGAsUYhiVLzGWFAxtqgkGmPK1URDEr1GJajRxBa7aCwxavTGmpggotjBBkYCYgEFWQVhC2xh2XLeP36P80xO29V43/f1efz+4QfPmTNnzpmdMzO/KqAoCr3g+UT4/7oBL3h6XnTec8yLznuOedF5zzEvOu855kXnPce86LznGDHXievXr58+fdrNWtq3b5+YmMh6avfu3VqtFv7u0aNH586di4uLT548qVark5OTTSbTtm3bEELvvvuuh4fHEzUdOHbs2K1bt7p169a1a9fS0tLjx4+zFhs5cmSLFi3g70uXLl28eLF169ZJSUm0Yt9//73FYhk+fHhQUBCzktra2p9++kksFk+dOhUhtG3bNpPJxNUwhUIxZswYh8OxYcMGfHDo0KHBwcG5ubl//vmnmw/Yq1evDh06sJ+jOFizZo2btSOEpk6dylVPTEwMLrZkyRKKojIzMxFCvXv3piiqqqoKThmNRq4a+BkzZgxCaMGCBRRF/fDDD1wtzMvLw5csWLAAITRmzBhmbSqVCiF09uxZ1nsVFBQghLy9veG/arWa553ExMRQFNXY2EgePH78OEVR0PdusmbNGq5n5xx5QLNmzV5++WWeAjdv3rx79y78rdVqL1++7OXl1atXL67Cx44dMxgMSUlJwcHBx44dq6urg1M5OTleXl7MS9RqNe7+pqam3NxchNBrr70mFovz8vLq6+sfPHjA/whAfn6+wWCAvymKSkpKat68+bFjx2jFevbsaTabb968iYdURERE69atWevs3bs3bj9w9+7dmzdvutMehFB4eHibNm14Cly5coVWPx2uXoWRl5SUxP/DnzlzJno88uCTFRoaShYgRx4wefJkiqKgG1wyadIkXFV1dTUc1Ov1FEV16dIFF3M58ki+/PJLiqJ27drFPFVdXU1RVHx8PD4ye/ZsrpHHZMmSJfhClyNv5syZ/O8WvupPP/IAu91eWVlJO9iiRQuZTEYekUqlERER+GNy9+5diqJsNhsuoFAo/Pz8JBJJeXm5TqeLiIhwOBwVFRW0mlUqlbe3t06n0+v15HGRSBQREYEQqqys1Gq1VqsVn9LpdOXl5WazGQpw8ejRI6PRCIUfPXqEEJJIJGq12ul03rt3j+dCk8lUU1Pz6NGjiIgILy+v8vJyhFBoaKhIJIICtbW1DQ0NeHZHCNlstvLycrKRrJjNZvyjxISEhIjFbnQNV6+SI6+srIx54aFDh6i/jjwaEomEdgnPnEeyd+9eiqJmz56N/jryMH5+fqzPMn78eP7f8vjx42mXdOnShaIo/CvhGnl79+5FCMXGxlIUZTQa4VRVVRWuefLkyS5fNWIbeYcOHWIWKysrc2fkvdgqPMc8y847ceKEBwH5xdi3b5/NZtNqtR4eHuRaS61W22w2m83m7e2NELp8+bLNZhs5ciRC6KuvvrLZbL169fJggJcemHnz5tlstu3bt+MjcC8PDw/4lMXHx3t4ePz444+0C69cueLh4REZGQnNiI2N9fDwWLx4sc1mmzhxIkLo66+/9vDwGD16NP+zb9y40WazLV68GCE0bNgwm81WWFiIEJJIJFBzSEjIE79QV7g157kJRVF2u531lEgkEovFrAXIjzsUg7+FQqFQKBQIBFx1kgiFQuYkQV7ocDhY64EmORwOuByKQW0CgQAh5HQ6nU6nOw0AEEICgUAsFuPpEGqG2p4tz7LzaBQWFnp6esLfS5cunTNnTk1NjfuXr1y5ctOmTbQ1Cxdr1qzZs2cPecThcMAfPXr0EIlEeD+DEHr//fc//PBDsjB+0cC4ceNkMtmHH36Ylpa2adOmlStXwvEbN25ER0dLJJLi4mKEUEpKik6n2759e9euXbka1tTUFB0djRDauXOnUqkMDQ1153Hc5D/Yee3atcNrFoPBUFJS8kSXP3r0yP1LHj16BKtHJsyNl1KpjIqK4qkNVp4ymSwqKqp58+b4eGNjY0lJibe3N1x+9+5djUZjNpt5qqIoCp4iLCzs2fYccrPzWrRowVwUdevWjXakU6dOZDF+cVdRUdHQoUPxf2E/NGPGDD8/v7S0tPj4+Lfeeqt79+7kJQaDYcKECQih3bt3y2SymTNn3r59e9asWa+++ioUyM3NXbFiRdu2bZcuXdu9zXry85WeoOXZqBWWodt67wpqV6h8VQwJxgAAAOyFWJEK+kqYA64w/bhZlZ+0nS2S0J8CQhXYR7ygHgAdwBEXzzpKukXZ1hTnAOTc0bRZl2NnkpVOI8ogFghpt9okzlo0wzWfxUy41sdM6zS4AeAYUpzzsO+XrQFksov1DdeieS0b9CmPv5Q7H37ay0/fkDZjH9kVxx2V6Z1zOYeKHtL0nkjcN6tpoVY1Wwm76IrLBP0V5raG7XHHu7szm8S6Zz5NqBoAfpi9Rr4Cw==">
-        </div>
-    </div>
+    <h1>QR Payment Information</h1>
+
+    <h2>Transaction Details</h2>
+    <ul>
+        <li><strong>Status Code:</strong> 00</li>
+        <li><strong>Message:</strong> Success!</li>
+        <li><strong>Transaction ID:</strong> As-20250303142605</li>
+    </ul>
+
+    <h2>Description</h2>
+    <p>Success</p>
+
+    <h2>QR String</h2>
+    <p>
+        00020101021230510016abaakhppxxx@abaa01151111111111111110208ABA Bank5204599953038405405100.55802KH5902jp6003N/A6232050701179220717As-2025030314260599520013F1BF016411FDA6814PWOnlinePW-2-06908purchase70010630495CC
+    </p>
+
+    <h2>QR Image</h2>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAIAAAD6XpeDAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAgAElEQVR4nO2dd1xUx97wZwssuyxtXVdY6bGBqGAsUYhiVLzGWFAxtqgkGmPK1URDEr1GJajRxBa7aCwxavTGmpggotjBBkYCYgEFWQVhC2xh2XLeP36P80xO29V43/f1efz+4QfPmTNnzpmdMzO/KqAoCr3g+UT4/7oBL3h6XnTec8yLznuOedF5zzEvOu855kXnPce86LznGDHXievXr58+fdrNWtq3b5+YmMh6avfu3VqtFv7u0aNH586di4uLT548qVark5OTTSbTtm3bEELvvvuuh4fHEzUdOHbs2K1bt7p169a1a9fS0tLjx4+zFhs5cmSLFi3g70uXLl28eLF169ZJSUm0Yt9//73FYhk+fHhQUBCzktra2p9++kksFk+dOhUhtG3bNpPJxNUwhUIxZswYh8OxYcMGfHDo0KHBwcG5ubl//vmnmw/Yq1evDh06sJ+jOFizZo2btSOEpk6dylVPTEwMLrZkyRKKojIzMxFCvXv3piiqqqoKThmNRq4a+BkzZgxCaMGCBRRF/fDDD1wtzMvLw5csWLAAITRmzBhmbSqVCiF09uxZ1nsVFBQghLy9veG/arWa553ExMRQFNXY2EgePH78OEVR0PdusmbNGq5n5xx5QLNmzV5++WWeAjdv3rx79y78rdVqL1++7OXl1atXL67Cx44dMxgMSUlJwcHBx44dq6urg1M5OTleXl7MS9RqNe7+pqam3NxchNBrr70mFovz8vLq6+sfPHjA/whAfn6+wWCAvymKSkpKat68+bFjx2jFevbsaTabb968iYdURERE69atWevs3bs3bj9w9+7dmzdvutMehFB4eHibNm14Cly5coVWPx2uXoWRl5SUxP/DnzlzJno88uCTFRoaShYgRx4wefJkiqKgG1wyadIkXFV1dTUc1Ov1FEV16dIFF3M58ki+/PJLiqJ27drFPFVdXU1RVHx8PD4ye/ZsrpHHZMmSJfhClyNv5syZ/O8WvupPP/IAu91eWVlJO9iiRQuZTEYekUqlERER+GNy9+5diqJsNhsuoFAo/Pz8JBJJeXm5TqeLiIhwOBwVFRW0mlUqlbe3t06n0+v15HGRSBQREYEQqqys1Gq1VqsVn9LpdOXl5WazGQpw8ejRI6PRCIUfPXqEEJJIJGq12ul03rt3j+dCk8lUU1Pz6NGjiIgILy+v8vJyhFBoaKhIJIICtbW1DQ0NeHZHCNlstvLycrKRrJjNZvyjxISEhIjFbnQNV6+SI6+srIx54aFDh6i/jjwaEomEdgnPnEeyd+9eiqJmz56N/jryMH5+fqzPMn78eP7f8vjx42mXdOnShaIo/CvhGnl79+5FCMXGxlIUZTQa4VRVVRWuefLkyS5fNWIbeYcOHWIWKysrc2fkvdgqPMc8y847ceKEBwH5xdi3b5/NZtNqtR4eHuRaS61W22w2m83m7e2NELp8+bLNZhs5ciRC6KuvvrLZbL169fJggJcemHnz5tlstu3bt+MjcC8PDw/4lMXHx3t4ePz444+0C69cueLh4REZGQnNiI2N9fDwWLx4sc1mmzhxIkLo66+/9vDwGD16NP+zb9y40WazLV68GCE0bNgwm81WWFiIEJJIJFBzSEjIE79QV7g157kJRVF2u531lEgkEovFrAXIjzsUg7+FQqFQKBQIBFx1kgiFQuYkQV7ocDhY64EmORwOuByKQW0CgQAh5HQ6nU6nOw0AEEICgUAsFuPpEGqG2p4tz7LzaBQWFnp6esLfS5cunTNnTk1NjfuXr1y5ctOmTbQ1Cxdr1qzZs2cPecThcMAfPXr0EIlEeD+DEHr//fc//PBDsjB+0cC4ceNkMtmHH36Ylpa2adOmlStXwvEbN25ER0dLJJLi4mKEUEpKik6n2759e9euXbka1tTUFB0djRDauXOnUqkMDQ1153Hc5D/Yee3atcNrFoPBUFJS8kSXP3r0yP1LHj16BKtHJsyNl1KpjIqK4qkNVp4ymSwqKqp58+b4eGNjY0lJibe3N1x+9+5djUZjNpt5qqIoCp4iLCzs2fYccrPzWrRowVwUdevWjXakU6dOZDF+cVdRUdHQoUPxf2E/NGPGDD8/v7S0tPj4+Lfeeqt79+7kJQaDYcKECQih3bt3y2SymTNn3r59e9asWa+++ioUyM3NXbFiRdu2bZcuXUq7XVpaWmlpKfy9Z88emJAQQq1atVq2bBmt8Ndffx0VFRUXF4cQSklJiYmJOXfu3NKlSyMiIlauXMm6iF+zZk12dvbt27dpxz08PP79738jhMgfAUm3bt2Y7xZL8vhxq/NkMtmQIUNcFlMqle4UA+rq6g4fPkw7eOrUKYQQLOjbtWvXrl078iz+6g4cONDPz++rr75CCHXu3BnftL6+HiHk7+/PbMaiRYvw3zdv3sTDkdzpYxISEvBuoXXr1q1bt4bFl5+fH9cDXrt2jfk4CCGhUMj/TgIDA91/aTRcdN7NmzdnzZrFU4AUlNy6dWvjxo3+/v7/+te/EEKff/653W6fNWtWYGAgFBg0aFCfPn3y8/P37dv30ksvTZs2rb6+Pj09HSG0aNEiT0/P5cuXazQaKPzEzG2l19p3lzTe5cHvzWyzqxx6gKnVCQ2umBhTjnnO6fBcrwyedcCg+HxsHh+8wG76q2N06HT0jAY6b7FFcu27Y9lqq6nFzV7d93jwYBCyJRG1chV6xaD+8Zc9CBO7O+XZjcuu3p7+goyGhr0Z/nBQ3HoFmjdbLDJ9Yoy7Q=="/>
+
+    <h2>Download Links</h2>
+    <a href="abamobilebank://ababank.com?type=payway&qrcode=00020101021230510016abaakhppxxx%40abaa01151111111111111110208ABA+Bank5204599953038405405100.55802KH5902jp6003N%2FA6232050701179220717As-2025030314260599520013F1BF016411FDA6814PWOnlinePW-2-06908purchase70010630495CC" class="button">Open ABAPay</a>
+    <a href="https://itunes.apple.com/al/app/aba-mobile-bank/id968860649?mt=8" class="button">App Store</a>
+    <a href="https://play.google.com/store/apps/details?id=com.paygo24.ibank" class="button">Google Play Store</a>
+
 </body>
 </html>
