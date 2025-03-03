@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Payment Information</title>
@@ -32,11 +33,13 @@
     </ul>
 
     <h2>Description</h2>
-    <p>Success</p>
+   
 
    <div class="qr-container">
-        <!-- This will display the QR code image -->
-        <div id="qrcode"></div>
+       QR Generated from qrString
+       <div id="qrcode"></div>
+
+       QR Image from response
            <img id="qrImage" src="" alt="QR Code Image">
         <!-- This will display the QR string below the QR code -->
         <div class="qr-string" id="qr-string"></div>
@@ -62,6 +65,18 @@
         document.getElementById('qr-string').textContent = qrString;
     </script>
 
+    <script>
+  var qrData = '00020101021230510016abaakhppxxx@abaa01151111111111111110208ABA Bank5204599953038405405100.55802KH5902jp6003N/A6232050701179220717As-2025030314260599520013F1BF016411FDA6814PWOnlinePW-2-06908purchase70010630495CC';
+  
+  var qrcode = new QRCode(document.getElementById("qrcode"), {
+    text: qrData,
+    width: 256,
+    height: 256,
+    colorDark : "#000000",
+    colorLight : "#ffffff",
+    correctLevel : QRCode.CorrectLevel.L
+  });
+</script>
     <h2>Download Links</h2>
     <a href="abamobilebank://ababank.com?type=payway&qrcode=00020101021230510016abaakhppxxx%40abaa01151111111111111110208ABA+Bank5204599953038405405100.55802KH5902jp6003N%2FA6232050701179220717As-2025030314260599520013F1BF016411FDA6814PWOnlinePW-2-06908purchase70010630495CC" class="button">Open ABAPay</a>
     <a href="https://itunes.apple.com/al/app/aba-mobile-bank/id968860649?mt=8" class="button">App Store</a>
