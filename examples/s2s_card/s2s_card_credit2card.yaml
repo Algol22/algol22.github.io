@@ -1,0 +1,315 @@
+openapi: 3.0.3
+info:
+  title: CREDIT2CARD API
+  version: 1.0.0
+  description: |
+    CREDIT2CARD protocol implements money transfer transactions between a merchant's account and a cardholder's credit card (Account-to-Card payments).
+    
+    Use `channel_id` to specify a sub-account if applicable. This request should be sent via POST (e.g., using PHP cURL).
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Credit2Card
+      operationId: credit2card
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - action
+                - client_key
+                - order_id
+                - order_amount
+                - order_currency
+                - order_description
+                - card_number
+                - hash
+              properties:
+                action:
+                  type: string
+                  enum: [CREDIT2CARD]
+                  description: Action type
+                  example: CREDIT2CARD
+                client_key:
+                  type: string
+                  description: Unique client key (CLIENT_KEY)
+                  example: abc123clientkey
+                channel_id:
+                  type: string
+                  maxLength: 16
+                  description: Sub-account identifier
+                  example: subacct01
+                order_id:
+                  type: string
+                  maxLength: 255
+                  description: Transaction ID in the client's system
+                  example: ORD-10001
+                order_amount:
+                  type: number
+                  format: float
+                  description: |
+                    Amount to be transferred. Use correct format based on currency:
+                    - 0 exponent (UGX, JPY): e.g., 100.00
+                    - 2 exponent: e.g., 100.99
+                    - 3 exponent: e.g., 100.999
+                    - 4 exponent: e.g., 100.9999
+                  example: 150.50
+                order_currency:
+                  type: string
+                  maxLength: 3
+                  description: 3-letter ISO currency code
+                  example: USD
+                order_description:
+                  type: string
+                  maxLength: 1024
+                  description: Description of the transaction (product/service)
+                  example: Freelance project payout
+                card_number:
+                  type: string
+                  description: Credit card number (PAN)
+                  example: 4111111111111111
+                payee_first_name:
+                  type: string
+                  maxLength: 32
+                  description: First name of the recipient
+                  example: Jane
+                payee_last_name:
+                  type: string
+                  maxLength: 32
+                  description: Last name of the recipient
+                  example: Doe
+                payee_middle_name:
+                  type: string
+                  maxLength: 32
+                  description: Middle name of the recipient (optional)
+                  example: Ann
+                payee_birth_date:
+                  type: string
+                  format: date
+                  description: Birth date of the payee in YYYY-MM-DD format
+                  example: 1990-05-20
+                payee_address:
+                  type: string
+                  maxLength: 255
+                  description: Street address of the payee
+                  example: 123 Elm St
+                payee_address2:
+                  type: string
+                  maxLength: 255
+                  description: Additional address details (if required)
+                  example: Apt 5C
+                payee_country:
+                  type: string
+                  maxLength: 2
+                  description: 2-letter country code
+                  example: US
+                payee_state:
+                  type: string
+                  maxLength: 32
+                  description: State/region
+                  example: NY
+                payee_city:
+                  type: string
+                  maxLength: 32
+                  description: City of residence
+                  example: New York
+                payee_zip:
+                  type: string
+                  maxLength: 10
+                  description: ZIP or postal code
+                  example: 10001
+                payee_email:
+                  type: string
+                  maxLength: 256
+                  description: Payee email address
+                  example: jane.doe@example.com
+                payee_phone:
+                  type: string
+                  maxLength: 32
+                  description: Payee phone number
+                  example: "+1-202-555-0143"
+                payer_first_name:
+                  type: string
+                  maxLength: 32
+                  description: First name of the payer
+                  example: John
+                payer_last_name:
+                  type: string
+                  maxLength: 32
+                  description: Last name of the payer
+                  example: Smith
+                payer_middle_name:
+                  type: string
+                  maxLength: 32
+                  description: Middle name of the payer (optional)
+                  example: Edward
+                payer_birth_date:
+                  type: string
+                  format: date
+                  description: Payer's birth date in YYYY-MM-DD format
+                  example: 1985-08-15
+                payer_address:
+                  type: string
+                  maxLength: 255
+                  description: Payer's street address
+                  example: 456 Maple Ave
+                payer_address2:
+                  type: string
+                  maxLength: 255
+                  description: Additional address details (if needed)
+                  example: Suite 2
+                payer_country:
+                  type: string
+                  maxLength: 2
+                  description: 2-letter payer country code
+                  example: CA
+                payer_state:
+                  type: string
+                  maxLength: 32
+                  description: Payer's state or province
+                  example: ON
+                payer_city:
+                  type: string
+                  maxLength: 32
+                  description: Payer's city
+                  example: Toronto
+                payer_zip:
+                  type: string
+                  maxLength: 10
+                  description: Payer's postal code
+                  example: M5H 2N2
+                payer_email:
+                  type: string
+                  maxLength: 256
+                  description: Email of the payer
+                  example: john.smith@example.ca
+                payer_phone:
+                  type: string
+                  maxLength: 32
+                  description: Payer's phone number
+                  example: "+1-416-555-0199"
+                payer_ip:
+                  type: string
+                  format: ipv4
+                  description: IP address of the payer
+                  example: 192.168.0.1
+                parameters:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  description: Optional key-value parameters needed by acquirer
+                  example:
+                    loyalty_id: "123456"
+                    device_id: "abc789xyz"
+                hash:
+                  type: string
+                  description: Signature to validate the request (see Appendix A, Formula 5)
+                  example: "1a2b3c4d5e6f7g8h9i0j"
+      responses:
+        '200':
+          description: CREDIT2CARD response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Credit2CardSuccess'
+                  - $ref: '#/components/schemas/Credit2CardDeclined'
+                  - $ref: '#/components/schemas/Credit2CardUndefined'
+
+components:
+  schemas:
+    Credit2CardSuccess:
+      type: object
+      required: [action, result, status, order_id, trans_id, trans_date]
+      properties:
+        action:
+          type: string
+          enum: [CREDIT2CARD]
+          example: CREDIT2CARD
+        result:
+          type: string
+          enum: [SUCCESS]
+          example: SUCCESS
+        status:
+          type: string
+          enum: [SETTLED]
+          example: SETTLED
+        order_id:
+          type: string
+          example: ORD-10001
+        trans_id:
+          type: string
+          example: TRX123456789
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T12:34:56Z
+        descriptor:
+          type: string
+          nullable: true
+          example: example.com/support
+
+    Credit2CardDeclined:
+      type: object
+      required: [action, result, status, order_id, trans_id, trans_date, decline_reason]
+      properties:
+        action:
+          type: string
+          enum: [CREDIT2CARD]
+          example: CREDIT2CARD
+        result:
+          type: string
+          enum: [DECLINED]
+          example: DECLINED
+        status:
+          type: string
+          enum: [DECLINED]
+          example: DECLINED
+        order_id:
+          type: string
+          example: ORD-10001
+        trans_id:
+          type: string
+          example: TRX123456789
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T12:34:56Z
+        decline_reason:
+          type: string
+          example: Insufficient funds
+
+    Credit2CardUndefined:
+      type: object
+      required: [action, result, status, order_id, trans_id, trans_date]
+      properties:
+        action:
+          type: string
+          enum: [CREDIT2CARD]
+          example: CREDIT2CARD
+        result:
+          type: string
+          enum: [UNDEFINED]
+          example: UNDEFINED
+        status:
+          type: string
+          enum: [PREPARE]
+          example: PREPARE
+        order_id:
+          type: string
+          example: ORD-10001
+        trans_id:
+          type: string
+          example: TRX123456789
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T12:34:56Z
+        descriptor:
+          type: string
+          example: example.com/payouts

@@ -1,0 +1,427 @@
+openapi: 3.0.3
+info:
+  title: Payment Platform SALE API
+  version: 1.0.0
+  description: >
+    API for SALE request to perform immediate payment (SALE) or authorization only (AUTH) transactions.
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Sale / Authorization
+      operationId: sale
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SaleRequest'
+            example:
+              action: SALE
+              client_key: 123e4567-e89b-12d3-a456-426614174000
+              channel_id: channel_01
+              order_id: 2025001
+              order_amount: 100.50
+              order_currency: USD
+              order_description: Purchase of widget A
+              req_token: N
+              card_number: 4111111111111111
+              card_exp_month: "12"
+              card_exp_year: "2027"
+              card_cvv2: "123"
+              payer_first_name: John
+              payer_last_name: Doe
+              payer_middle_name: A
+              payer_birth_date: 1990-01-01
+              payer_address: 123 Main St
+              payer_address2: Apt 4B
+              payer_house_number: 123
+              payer_country: US
+              payer_state: NY
+              payer_city: New York
+              payer_district: Manhattan
+              payer_zip: 10001
+              payer_email: john.doe@example.com
+              payer_phone: "+1234567890"
+              payer_ip: 192.168.1.1
+              term_url_3ds: https://merchant.example.com/3ds-return
+              term_url_target: _self
+              recurring_init: N
+              schedule_id: ""
+              auth: N
+              parameters:
+                acquirer_param1: value1
+                acquirer_param2: value2
+              custom_data:
+                custom_field1: custom_value1
+                custom_field2: custom_value2
+              hash: abcdef1234567890abcdef1234567890abcdef12
+
+      responses:
+        '200':
+          description: Transaction response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SaleSuccessResponse'
+                  - $ref: '#/components/schemas/SaleDeclinedResponse'
+                  - $ref: '#/components/schemas/SaleRedirectResponse'
+                  - $ref: '#/components/schemas/SaleUndefinedResponse'
+                discriminator:
+                  propertyName: result
+                  mapping:
+                    SUCCESS: '#/components/schemas/SaleSuccessResponse'
+                    DECLINED: '#/components/schemas/SaleDeclinedResponse'
+                    REDIRECT: '#/components/schemas/SaleRedirectResponse'
+                    UNDEFINED: '#/components/schemas/SaleUndefinedResponse'
+
+components:
+  schemas:
+    SaleRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - order_id
+        - order_amount
+        - order_currency
+        - order_description
+        - payer_first_name
+        - payer_last_name
+        - payer_address
+        - payer_country
+        - payer_city
+        - payer_zip
+        - payer_email
+        - payer_phone
+        - payer_ip
+        - term_url_3ds
+        - card_number
+        - card_exp_month
+        - card_exp_year
+        - card_cvv2
+        - hash
+      properties:
+        action:
+          type: string
+          enum: [SALE]
+          description: Action type, fixed value "SALE"
+          example: SALE
+
+        client_key:
+          type: string
+          format: uuid
+          description: Unique client key
+          example: 123e4567-e89b-12d3-a456-426614174000
+
+        channel_id:
+          type: string
+          maxLength: 16
+          description: Payment channel (Sub-account), optional
+          example: channel_01
+
+        order_id:
+          type: string
+          maxLength: 255
+          description: Transaction ID in Merchant system
+          example: 2025001
+
+        order_amount:
+          type: number
+          description: Amount of the transaction. Format depends on currency exponent.
+          example: 100.50
+
+        order_currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: 3-letter currency code
+          example: USD
+
+        order_description:
+          type: string
+          maxLength: 1024
+          description: Description of the transaction
+          example: Purchase of widget A
+
+        req_token:
+          type: string
+          enum: [Y, N]
+          default: N
+          description: Special attribute for tokenization request
+          example: N
+
+        card_token:
+          type: string
+          maxLength: 64
+          description: Credit card token (optional)
+          example: ''
+
+        card_number:
+          type: string
+          description: Credit Card Number; optional if card_token/payment_token specified
+          example: 4111111111111111
+
+        card_exp_month:
+          type: string
+          pattern: "^(0[1-9]|1[0-2])$"
+          description: Expiry month (MM)
+          example: "12"
+
+        card_exp_year:
+          type: string
+          pattern: "^[0-9]{4}$"
+          description: Expiry year (YYYY)
+          example: "2027"
+
+        card_cvv2:
+          type: string
+          pattern: "^[0-9]{3,4}$"
+          description: CVV code; optional if payment_token specified
+          example: "123"
+
+        digital_wallet:
+          type: string
+          enum: [googlepay, applepay]
+          description: Digital wallet provider
+          example: googlepay
+
+        payment_token:
+          type: string
+          description: Token from digital wallet; ignored if card_token present
+          example: 'abc123token'
+
+        payer_first_name:
+          type: string
+          maxLength: 32
+          description: Customer's first name
+          example: John
+
+        payer_last_name:
+          type: string
+          maxLength: 32
+          description: Customer's last name
+          example: Doe
+
+        payer_middle_name:
+          type: string
+          maxLength: 32
+          description: Customer's middle name
+          example: A
+
+        payer_birth_date:
+          type: string
+          format: date
+          description: Customer's birthday (yyyy-MM-dd)
+          example: 1990-01-01
+
+        payer_address:
+          type: string
+          maxLength: 255
+          description: Customer's address
+          example: 123 Main St
+
+        payer_address2:
+          type: string
+          maxLength: 255
+          description: Additional address info
+          example: Apt 4B
+
+        payer_house_number:
+          type: string
+          maxLength: 9
+          description: House/building number
+          example: "123"
+
+        payer_country:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: 2-letter country code
+          example: US
+
+        payer_state:
+          type: string
+          maxLength: 32
+          description: State or region
+          example: NY
+
+        payer_city:
+          type: string
+          maxLength: 40
+          description: City
+          example: New York
+
+        payer_district:
+          type: string
+          maxLength: 32
+          description: District of city
+          example: Manhattan
+
+        payer_zip:
+          type: string
+          maxLength: 10
+          description: ZIP/postal code
+          example: 10001
+
+        payer_email:
+          type: string
+          maxLength: 256
+          format: email
+          description: Customer's email
+          example: john.doe@example.com
+
+        payer_phone:
+          type: string
+          maxLength: 32
+          description: Customer's phone number
+          example: "+1234567890"
+
+        payer_ip:
+          type: string
+          format: ipv4
+          description: IP address (IPv4 or IPv6)
+          example: 192.168.1.1
+
+        term_url_3ds:
+          type: string
+          maxLength: 1024
+          format: uri
+          description: URL for 3D-Secure return
+          example: https://merchant.example.com/3ds-return
+
+        term_url_target:
+          type: string
+          maxLength: 1024
+          description: Browsing context name for 3DS return (_blank, _self, _parent, _top or iframe name)
+          example: _self
+
+        recurring_init:
+          type: string
+          enum: [Y, N]
+          default: N
+          description: Initialization flag for recurring payments
+          example: N
+
+        schedule_id:
+          type: string
+          description: Schedule ID for recurring payments
+          example: ""
+
+        auth:
+          type: string
+          enum: [Y, N]
+          default: N
+          description: If 'Y', perform AUTH only (authorization without capture)
+          example: N
+
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Extra parameters required by acquirer
+          example:
+            acquirer_param1: example_value1
+            acquirer_param2: example_value2
+
+        custom_data:
+          type: object
+          additionalProperties:
+            type: string
+          description: Custom data duplicating arbitrary parameters
+          example:
+            custom_field1: example_custom_value1
+            custom_field2: example_custom_value2
+
+        hash:
+          type: string
+          description: Signature to validate request
+          example: abcdef1234567890abcdef1234567890abcdef12
+
+    BaseSaleResponse:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [SALE]
+          description: Action type
+        result:
+          type: string
+          description: Result of transaction
+        status:
+          type: string
+          description: Status of transaction
+        order_id:
+          type: string
+          description: Merchant's transaction ID
+        trans_id:
+          type: string
+          description: Payment Platform transaction ID
+        trans_date:
+          type: string
+          format: date-time
+          description: Transaction date in Payment Platform
+        descriptor:
+          type: string
+          description: Descriptor on bank statement
+
+    SaleSuccessResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseSaleResponse'
+        - type: object
+          properties:
+            result:
+              type: string
+              enum: [SUCCESS]
+            auth_code:
+              type: string
+              description: Authorization code
+            rrn:
+              type: string
+              description: Retrieval Reference Number
+            card_token:
+              type: string
+              description: Tokenized card identifier
+
+    SaleDeclinedResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseSaleResponse'
+        - type: object
+          properties:
+            result:
+              type: string
+              enum: [DECLINED]
+            error_code:
+              type: string
+              description: Error code
+            error_message:
+              type: string
+              description: Error message
+
+    SaleRedirectResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseSaleResponse'
+        - type: object
+          properties:
+            result:
+              type: string
+              enum: [REDIRECT]
+            redirect_url:
+              type: string
+              format: uri
+              description: URL to redirect customer for 3DS or other verification
+
+    SaleUndefinedResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseSaleResponse'
+        - type: object
+          properties:
+            result:
+              type: string
+              enum: [UNDEFINED]
+            error_message:
+              type: string
+              description: Error message for undefined state

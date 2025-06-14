@@ -1,0 +1,281 @@
+openapi: 3.0.3
+info:
+  title: Payment Platform VOID API
+  version: 1.0.0
+  description: |
+    The VOID request is used to cancel operations (SALE, CAPTURE, SALE_RECURRING) performed the same financial day.
+    The VOID request is allowed for payments in SETTLED status only.
+
+paths:
+  /post:
+    post:
+      tags:
+        - Transactions
+      summary: Void (cancel)
+      operationId: void
+      requestBody:
+        required: true
+        content:
+           application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VoidRequest'
+            examples:
+              voidRequestExample:
+                summary: Example VOID request
+                value:
+                  action: VOID
+                  client_key: 123e4567-e89b-12d3-a456-426614174000
+                  trans_id: d4e5f678-1234-5678-9abc-def012345678
+                  hash: "abcdef1234567890abcdef1234567890abcdef12"
+      responses:
+        '200':
+          description: VOID response
+          content:
+            application/json:
+              oneOf:
+                - $ref: '#/components/schemas/VoidResponseSuccess'
+                - $ref: '#/components/schemas/VoidResponseDeclined'
+                - $ref: '#/components/schemas/VoidResponseUndefined'
+              examples:
+                successResponse:
+                  summary: Successful VOID response
+                  value:
+                    action: VOID
+                    result: SUCCESS
+                    status: VOID
+                    order_id: ORDER-987654321
+                    trans_id: d4e5f678-1234-5678-9abc-def012345678
+                    trans_date: 2025-06-08T15:00:00Z
+                declinedResponse:
+                  summary: Declined VOID response
+                  value:
+                    action: VOID
+                    result: DECLINED
+                    status: SETTLED
+                    order_id: ORDER-987654321
+                    trans_id: d4e5f678-1234-5678-9abc-def012345678
+                    trans_date: 2025-06-08T15:00:00Z
+                    decline_reason: Insufficient funds
+                undefinedResponse:
+                  summary: Undefined VOID response
+                  value:
+                    action: VOID
+                    result: UNDEFINED
+                    status: PENDING
+                    order_id: ORDER-987654321
+                    trans_id: d4e5f678-1234-5678-9abc-def012345678
+                    trans_date: 2025-06-08T15:00:00Z
+
+components:
+  schemas:
+
+    VoidRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - trans_id
+        - hash
+      properties:
+        action:
+          type: string
+          enum:
+            - VOID
+          description: Action type, fixed "VOID"
+          example: VOID
+        client_key:
+          type: string
+          format: uuid
+          description: Unique client key
+          example: 123e4567-e89b-12d3-a456-426614174000
+        trans_id:
+          type: string
+          maxLength: 255
+          description: Transaction ID in the Payment Platform
+          example: d4e5f678-1234-5678-9abc-def012345678
+        hash:
+          type: string
+          description: Signature to validate request
+          example: abcdef1234567890abcdef1234567890abcdef12
+
+    VoidResponseSuccess:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+      properties:
+        action:
+          type: string
+          enum:
+            - VOID
+          example: VOID
+        result:
+          type: string
+          enum:
+            - SUCCESS
+          example: SUCCESS
+        status:
+          type: string
+          enum:
+            - VOID
+          example: VOID
+        order_id:
+          type: string
+          description: Transaction ID in Client's system
+          example: ORDER-987654321
+        trans_id:
+          type: string
+          description: Transaction ID in Payment Platform
+          example: d4e5f678-1234-5678-9abc-def012345678
+        trans_date:
+          type: string
+          format: date-time
+          description: Transaction date in Payment Platform
+          example: 2025-06-08T15:00:00Z
+        connector_name:
+          type: string
+          nullable: true
+          description: Connector's name (Payment Gateway)
+          example: ExampleGateway
+        rrn:
+          type: string
+          nullable: true
+          description: Retrieval Reference Number from acquirer system
+          example: "123456789012"
+        approval_code:
+          type: string
+          nullable: true
+          description: Approval code from acquirer system
+          example: APPR1234
+        gateway_id:
+          type: string
+          nullable: true
+          description: Gateway transaction identifier
+          example: GW-987654321
+        extra_gateway_id:
+          type: string
+          nullable: true
+          description: Extra Gateway ID
+          example: GW-EXTRA-001
+        merchant_name:
+          type: string
+          nullable: true
+          description: Merchant Name
+          example: Example Merchant
+        mid_name:
+          type: string
+          nullable: true
+          description: MID Name
+          example: MID-12345
+        issuer_country:
+          type: string
+          nullable: true
+          description: Issuer Country
+          example: US
+        issuer_bank:
+          type: string
+          nullable: true
+          description: Issuer Bank
+          example: Bank of Examples
+        hash:
+          type: string
+          description: Signature to validate callback
+          example: abcdef1234567890abcdef1234567890abcdef12
+
+    VoidResponseDeclined:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - decline_reason
+        - hash
+      properties:
+        action:
+          type: string
+          enum:
+            - VOID
+          example: VOID
+        result:
+          type: string
+          enum:
+            - DECLINED
+          example: DECLINED
+        status:
+          type: string
+          enum:
+            - SETTLED
+          example: SETTLED
+        order_id:
+          type: string
+          description: Transaction ID in Client's system
+          example: ORDER-987654321
+        trans_id:
+          type: string
+          description: Transaction ID in Payment Platform
+          example: d4e5f678-1234-5678-9abc-def012345678
+        trans_date:
+          type: string
+          format: date-time
+          description: Transaction date in Payment Platform
+          example: 2025-06-08T15:00:00Z
+        decline_reason:
+          type: string
+          description: Reason for transaction decline
+          example: Insufficient funds
+        hash:
+          type: string
+          description: Signature to validate callback
+          example: abcdef1234567890abcdef1234567890abcdef12
+
+    VoidResponseUndefined:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - hash
+      properties:
+        action:
+          type: string
+          enum:
+            - VOID
+          example: VOID
+        result:
+          type: string
+          enum:
+            - UNDEFINED
+          example: UNDEFINED
+        status:
+          type: string
+          enum:
+            - PENDING
+            - SETTLED
+          example: PENDING
+        order_id:
+          type: string
+          description: Transaction ID in Client's system
+          example: ORDER-987654321
+        trans_id:
+          type: string
+          description: Transaction ID in Payment Platform
+          example: d4e5f678-1234-5678-9abc-def012345678
+        trans_date:
+          type: string
+          format: date-time
+          description: Transaction date in Payment Platform
+          example: 2025-06-08T15:00:00Z
+        hash:
+          type: string
+          description: Signature to validate callback
+          example: abcdef1234567890abcdef1234567890abcdef12

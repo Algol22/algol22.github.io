@@ -1,0 +1,71 @@
+---
+id: retry
+title: "Retry (secondary recurring)"
+description: "Retry (secondary recurring)"
+sidebar_label: "Retry (secondary recurring)"
+hide_title: true
+hide_table_of_contents: true
+api: eJytVU1v2zgQ/SvEXDYFZMd2HCfRzetksQG2qOE4h4VjFBQ5tthKpMKPJIKh/74YynbsNmnRYnWRKM68eZx5M9yA52sH6QLuBndswq2EZQKmQsu9MvpWQgoWva0hAYuPAZ3/08ga0k1cKosSUm8DJiCM9qg9bfGqKpSICKcvnefn587K2LITbIFaGEk+G3Aix5LTl68rhBRM9gWF3wZqkRfABaFAAqJQqP3nr0hUvOXafVYSEsi5y4lzZYm1V+gig9btFdx5q/QaEkAdSgKe3cxn/5KjRCesqlp7+BicZxmyh9bgAcjlhZdVQSitU3PE5o0YdFruIYUQIsfjEPdaPQZkLQRrD/Qaoj84w+H56KKDl1dZpz+QZx0+PB91hoPRqD/sXwx7vR4x2Kfgl+PPybNNELu9ZmbFfI7MmZUvaiZRFEqjZBZFsITH/IG9N2wnh1+i3CfKsVRv0D2md6fWmvtgkYI98UJJ7pHVJli2VSBtTHldUvqmBfd0XHbiENm4qlBL9cLGCfvL2DIUnPU/HJHlmZC46g/OiPHlVQ+a+JDqXGW0a/Uz6PXo9Q2zWovcGm2CYzvrfUZ25ODdTvjiWkW+L/zf1vAbCrXoQuF/5D2eTG6m85vrY4D93yYBYyXadzT2Q00pHTX1Ea3IufZ/OOZq57E8qsSn2XXn4vJqeD7qD87+V0lvw3+rkd8Q7U4cx+FmseAnDoXRksfab5uFtFaizw0NzspEOVTc55DC6Xap9MrEEyofiXyn5FhCNp7eQgJPaF0bs9/tdXvfHby13fWFciw4lK+aXAUtHRM5t2vq5JWx7A3SrGopOEqc4A5pJtA82E2D7oOe58qxbYaFRe7RMb6lejgguJZMcIIJDnfAbKU0L5jz3IdIR6/3mAfcHZlmNZt+upvvaphx8XVtTdCSnWB33WU+tyasczb9e8om97N/PnQfNImHslvy2C6al/jTKh3lca83jy/+tCq4ipjBFrTXFnDR1nOZQE7vdAGbTcYd3tuiaej3Y0BbQ7pYJvDEreIZlXexpMGHXKKFdLGBeGPApJ0QnTlFJfMixNn003uzSXYQYyGw8u84x1HTLA+0SDmFBLLt5V0aST4HyMnhgmg3zX8RTLuB
+sidebar_class_name: "post api-method"
+info_path: docs/requests/s2s_card/payment-platform-retry-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Retry (secondary recurring)"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/post"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Retry (secondary recurring)
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"required":true,"content":{"application/x-www-form-urlencoded":{"schema":{"type":"object","required":["action","client_key","trans_id","hash"],"properties":{"action":{"type":"string","enum":["RETRY"],"description":"Must be \"RETRY\"","example":"RETRY"},"client_key":{"type":"string","format":"uuid","description":"Unique client key","example":"123e4567-e89b-12d3-a456-426614174000"},"trans_id":{"type":"string","format":"uuid","description":"Transaction ID of the softly declined recurring transaction to retry","example":"123e4567-e89b-12d3-a456-426614174001"},"hash":{"type":"string","description":"Signature to validate your request to Payment Platform (see Appendix A, Formula 1)","example":"abcdef1234567890"}}}}}}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Synchronous response to retry request","content":{"application/json":{"schema":{"type":"object","properties":{"action":{"type":"string","enum":["RETRY"],"example":"RETRY"},"result":{"type":"string","enum":["ACCEPTED"],"example":"ACCEPTED"},"order_id":{"type":"string","description":"Transaction ID in the Merchant's system","example":"ORD-789456123"},"trans_id":{"type":"string","format":"uuid","description":"Transaction ID in the Payment Platform","example":"123e4567-e89b-12d3-a456-426614174001"}}}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

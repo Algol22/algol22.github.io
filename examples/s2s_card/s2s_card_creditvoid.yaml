@@ -1,0 +1,353 @@
+openapi: 3.0.3
+info:
+  title: Payment Platform CREDITVOID API
+  version: 1.0.0
+  description: |
+    CREDITVOID request completes REFUND and REVERSAL transactions.
+
+    REVERSAL cancels hold on funds or reverses completed debit transaction.
+
+    REFUND returns funds to card account previously submitted by SALE or CAPTURE.
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Creditvoid (refund / reversal)
+      operationId: creditvoid
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreditvoidRequest'
+            examples:
+              fullRefundExample:
+                summary: Full refund request example
+                value:
+                  action: CREDITVOID
+                  client_key: 123e4567-e89b-12d3-a456-426614174000
+                  trans_id: d4e5f678-1234-5678-9abc-def012345678
+                  hash: "abcdef1234567890abcdef1234567890abcdef12"
+              partialRefundExample:
+                summary: Partial refund request example
+                value:
+                  action: CREDITVOID
+                  client_key: 123e4567-e89b-12d3-a456-426614174000
+                  trans_id: d4e5f678-1234-5678-9abc-def012345678
+                  amount: 50.00
+                  hash: "abcdef1234567890abcdef1234567890abcdef12"
+      responses:
+        '200':
+          description: Synchronous CREDITVOID response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditvoidSyncResponse'
+              examples:
+                acceptedResponse:
+                  summary: ACCEPTED synchronous response
+                  value:
+                    action: CREDITVOID
+                    result: ACCEPTED
+                    order_id: ORDER-987654321
+                    trans_id: d4e5f678-1234-5678-9abc-def012345678
+
+components:
+  schemas:
+
+    CreditvoidRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - trans_id
+        - hash
+      properties:
+        action:
+          type: string
+          enum:
+            - CREDITVOID
+          description: Action type, fixed "CREDITVOID"
+          example: CREDITVOID
+        client_key:
+          type: string
+          format: uuid
+          description: Unique client key
+          example: 123e4567-e89b-12d3-a456-426614174000
+        trans_id:
+          type: string
+          format: uuid
+          description: Transaction ID in Payment Platform
+          example: d4e5f678-1234-5678-9abc-def012345678
+        amount:
+          type: number
+          description: |
+            Refund amount (optional).
+            If omitted, full refund is issued.
+            Format depends on currency exponent.
+          example: 100.00
+        hash:
+          type: string
+          description: Signature to validate request
+          example: abcdef1234567890abcdef1234567890abcdef12
+
+    CreditvoidSyncResponse:
+      type: object
+      required:
+        - action
+        - result
+        - order_id
+        - trans_id
+      properties:
+        action:
+          type: string
+          enum:
+            - CREDITVOID
+          example: CREDITVOID
+        result:
+          type: string
+          enum:
+            - ACCEPTED
+          example: ACCEPTED
+        order_id:
+          type: string
+          description: Merchant's transaction ID
+          example: ORDER-987654321
+        trans_id:
+          type: string
+          format: uuid
+          description: Payment Platform transaction ID
+          example: d4e5f678-1234-5678-9abc-def012345678
+
+    CreditvoidCallbackSuccess:
+      type: object
+      required:
+        - action
+        - result
+        - order_id
+        - trans_id
+        - creditvoid_date
+        - amount
+        - hash
+      properties:
+        action:
+          type: string
+          enum:
+            - CREDITVOID
+          example: CREDITVOID
+        result:
+          type: string
+          enum:
+            - SUCCESS
+          example: SUCCESS
+        status:
+          type: string
+          enum:
+            - REFUND
+            - REVERSAL
+            - SETTLED
+          description: >
+            "REFUND"/"REVERSAL" for full refund,
+            "SETTLED" for partial refund.
+          example: REFUND
+        order_id:
+          type: string
+          description: Merchant's transaction ID
+          example: ORDER-123456789
+        trans_id:
+          type: string
+          format: uuid
+          description: Payment Platform transaction ID
+          example: d4e5f678-1234-5678-9abc-def012345678
+        creditvoid_date:
+          type: string
+          format: date-time
+          description: Date/time of refund/reversal
+          example: 2025-06-08T15:00:00Z
+        amount:
+          type: number
+          description: Amount refunded/reversed
+          example: 100.00
+        connector_name:
+          type: string
+          nullable: true
+          description: Connector's name (if configured)
+          example: ExampleGateway
+        rrn:
+          type: string
+          nullable: true
+          description: Retrieval Reference Number from acquirer (if configured)
+          example: "123456789012"
+        approval_code:
+          type: string
+          nullable: true
+          description: Approval code from acquirer (if configured)
+          example: APPR1234
+        gateway_id:
+          type: string
+          nullable: true
+          description: Gateway transaction identifier (if configured)
+          example: GW-987654321
+        extra_gateway_id:
+          type: string
+          nullable: true
+          description: Extra Gateway ID (if configured)
+          example: GW-EXTRA-001
+        merchant_name:
+          type: string
+          nullable: true
+          description: Merchant name (if configured)
+          example: Example Merchant
+        mid_name:
+          type: string
+          nullable: true
+          description: MID name (if configured)
+          example: MID-12345
+        issuer_country:
+          type: string
+          nullable: true
+          description: Issuer country (if configured)
+          example: US
+        issuer_bank:
+          type: string
+          nullable: true
+          description: Issuer bank (if configured)
+          example: Bank of Examples
+        hash:
+          type: string
+          description: Signature to validate callback
+          example: abcdef1234567890abcdef1234567890abcdef12
+
+    CreditvoidCallbackDeclined:
+      type: object
+      required:
+        - action
+        - result
+        - order_id
+        - trans_id
+        - decline_reason
+        - hash
+      properties:
+        action:
+          type: string
+          enum:
+            - CREDITVOID
+          example: CREDITVOID
+        result:
+          type: string
+          enum:
+            - DECLINED
+          example: DECLINED
+        order_id:
+          type: string
+          description: Merchant's transaction ID
+          example: ORDER-123456789
+        trans_id:
+          type: string
+          format: uuid
+          description: Payment Platform transaction ID
+          example: d4e5f678-1234-5678-9abc-def012345678
+        decline_reason:
+          type: string
+          description: Reason for cancellation
+          example: Insufficient funds
+        hash:
+          type: string
+          description: Signature to validate callback
+          example: abcdef1234567890abcdef1234567890abcdef12
+
+    CreditvoidCallbackUndefined:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - creditvoid_date
+        - amount
+        - hash
+      properties:
+        action:
+          type: string
+          enum:
+            - CREDITVOID
+          example: CREDITVOID
+        result:
+          type: string
+          enum:
+            - UNDEFINED
+          example: UNDEFINED
+        status:
+          type: string
+          enum:
+            - SETTLED
+          example: SETTLED
+        order_id:
+          type: string
+          description: Merchant's transaction ID
+          example: ORDER-123456789
+        trans_id:
+          type: string
+          format: uuid
+          description: Payment Platform transaction ID
+          example: d4e5f678-1234-5678-9abc-def012345678
+        creditvoid_date:
+          type: string
+          format: date-time
+          description: Transaction date in Payment Platform
+          example: 2025-06-08T15:00:00Z
+        amount:
+          type: number
+          description: Order amount
+          example: 100.00
+        hash:
+          type: string
+          description: Signature to validate callback
+          example: abcdef1234567890abcdef1234567890abcdef12
+
+examples:
+  CreditvoidSuccessCallbackExample:
+    summary: Successful refund callback example
+    value:
+      action: CREDITVOID
+      result: SUCCESS
+      status: REFUND
+      order_id: ORDER-123456789
+      trans_id: d4e5f678-1234-5678-9abc-def012345678
+      creditvoid_date: 2025-06-08T15:00:00Z
+      amount: 100.00
+      connector_name: "ExampleGateway"
+      rrn: "123456789012"
+      approval_code: "APPR1234"
+      gateway_id: "GW-987654321"
+      extra_gateway_id: "GW-EXTRA-001"
+      merchant_name: "Example Merchant"
+      mid_name: "MID-12345"
+      issuer_country: "US"
+      issuer_bank: "Bank of Examples"
+      hash: "abcdef1234567890abcdef1234567890abcdef12"
+
+  CreditvoidDeclinedCallbackExample:
+    summary: Declined refund callback example
+    value:
+      action: CREDITVOID
+      result: DECLINED
+      order_id: ORDER-123456789
+      trans_id: d4e5f678-1234-5678-9abc-def012345678
+      decline_reason: "Insufficient funds"
+      hash: "abcdef1234567890abcdef1234567890abcdef12"
+
+  CreditvoidUndefinedCallbackExample:
+    summary: Undefined refund callback example
+    value:
+      action: CREDITVOID
+      result: UNDEFINED
+      status: SETTLED
+      order_id: ORDER-123456789
+      trans_id: d4e5f678-1234-5678-9abc-def012345678
+      creditvoid_date: 2025-06-08T15:00:00Z
+      amount: 100.00
+      hash: "abcdef1234567890abcdef1234567890abcdef12"

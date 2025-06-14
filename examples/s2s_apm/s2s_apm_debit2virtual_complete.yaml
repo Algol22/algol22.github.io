@@ -1,0 +1,202 @@
+openapi: 3.0.3
+info:
+  title: DEBIT2VIRTUAL_COMPLETE API
+  version: 1.0.0
+  description: >
+    This endpoint is used to confirm a previously initiated debit transaction. It finalizes the process started with the DEBIT2VIRTUAL_CALC request.
+
+# servers:
+#   - url: https://{PAYMENT_API_HOST}
+#     description: Payment Platform API server
+#     variables:
+#       PAYMENT_API_HOST:
+#         default: api.paymentplatform.com
+
+paths:
+  /api/v1/payment/debit2virtual_complete:
+    post:
+      summary: Confirm initiated debit transaction
+      operationId: debit2virtual_complete
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Debit2VirtualCompleteRequest'
+            example:
+              action: DEBIT2VIRTUAL_COMPLETE
+              client_key: "abc123-456-def789"
+              trans_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+              hash: "d41d8cd98f00b204e9800998ecf8427e"
+      responses:
+        '200':
+          description: Transaction confirmation response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DebitCompleteSuccessResponse'
+                  - $ref: '#/components/schemas/DebitCompleteDeclinedResponse'
+                  - $ref: '#/components/schemas/DebitCompleteUndefinedResponse'
+
+components:
+  schemas:
+    Debit2VirtualCompleteRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - trans_id
+        - hash
+      properties:
+        action:
+          type: string
+          enum: [DEBIT2VIRTUAL_COMPLETE]
+          example: DEBIT2VIRTUAL_COMPLETE
+        client_key:
+          type: string
+          format: uuid
+          example: abc123-456-def789
+        trans_id:
+          type: string
+          format: uuid
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        hash:
+          type: string
+          description: Signature to validate request
+          example: d41d8cd98f00b204e9800998ecf8427e
+
+    DebitCompleteBaseResponse:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - descriptor
+        - amount
+        - currency
+        - commission
+        - total_amount
+      properties:
+        action:
+          type: string
+          example: DEBIT2VIRTUAL_COMPLETE
+        result:
+          type: string
+          example: SUCCESS
+        status:
+          type: string
+          example: SETTLED
+        order_id:
+          type: string
+          example: ORD987654
+        trans_id:
+          type: string
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        trans_date:
+          type: string
+          format: date-time
+          example: "2025-06-09T12:34:56Z"
+        descriptor:
+          type: string
+          example: Debit transaction completion
+        amount:
+          type: number
+          example: 250.00
+        currency:
+          type: string
+          example: EUR
+        commission:
+          type: number
+          example: 5.00
+        total_amount:
+          type: number
+          example: 255.00
+
+    DebitCompleteSuccessResponse:
+      allOf:
+        - $ref: '#/components/schemas/DebitCompleteBaseResponse'
+        - type: object
+          properties:
+            result:
+              type: string
+              example: SUCCESS
+            status:
+              type: string
+              enum: [3DS, REDIRECT, SETTLED]
+              example: SETTLED
+
+    DebitCompleteDeclinedResponse:
+      allOf:
+        - $ref: '#/components/schemas/DebitCompleteBaseResponse'
+        - type: object
+          properties:
+            result:
+              type: string
+              example: DECLINED
+            status:
+              type: string
+              example: DECLINED
+            decline_reason:
+              type: string
+              example: Insufficient funds
+
+    DebitCompleteUndefinedResponse:
+      allOf:
+        - $ref: '#/components/schemas/DebitCompleteBaseResponse'
+        - type: object
+          properties:
+            result:
+              type: string
+              example: UNDEFINED
+            status:
+              type: string
+              enum: [REDIRECT, PREPARE]
+              example: REDIRECT
+
+    DebitCompleteCallback:
+      allOf:
+        - $ref: '#/components/schemas/DebitCompleteBaseResponse'
+        - type: object
+          properties:
+            action:
+              type: string
+              example: DEBIT2VIRTUAL
+            result:
+              type: string
+              enum: [SUCCESS, DECLINED, UNDEFINED]
+              example: SUCCESS
+            connector_name:
+              type: string
+              example: SimulatedConnector
+            rrn:
+              type: string
+              example: "123456789012"
+            approval_code:
+              type: string
+              example: "APPROVAL123"
+            gateway_id:
+              type: string
+              example: "gw-sim-001"
+            extra_gateway_id:
+              type: string
+              example: "gw-extra-sim-001"
+            merchant_name:
+              type: string
+              example: SimMerchant
+            mid_name:
+              type: string
+              example: mid-sim-merchant
+            issuer_country:
+              type: string
+              example: FR
+            issuer_bank:
+              type: string
+              example: BNP Paribas
+            hash:
+              type: string
+              description: Signature for callback validation
+              example: d41d8cd98f00b204e9800998ecf8427e

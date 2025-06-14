@@ -1,0 +1,120 @@
+openapi: 3.0.3
+info:
+  title: Payment Refund API
+  version: 1.0.0
+  description: >
+    Endpoint to initiate a refund request using payment public ID from the Payment Platform.
+
+# servers:
+#   - url: https://{CHECKOUT_HOST}
+#     description: Payment Platform API server
+#     variables:
+#       CHECKOUT_HOST:
+#         default: api.paymentplatform.com
+#         description: Hostname for the Payment Platform API
+
+paths:
+  /api/v1/payment/refund:
+    post:
+      summary: Refund
+      operationId: refund
+      description: >
+        Sends a refund request for a specific payment identified by payment_id.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+            example:
+              merchant_key: xxxxx-xxxxx-xxxxx
+              payment_id: 63c781cc-de3d-11eb-a1f1-0242ac130006
+              amount: "0.10"
+              hash: "A1B2C3D4E5F67890123456789ABCDEF123456789"
+      responses:
+        '200':
+          description: Refund request response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefundResponse'
+              examples:
+                accepted:
+                  summary: Refund accepted response
+                  value:
+                    payment_id: "63c781cc-de3d-11eb-a1f1-0242ac130006"
+                    result: "accepted"
+        '400':
+          description: Bad request - missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid merchant key or hash
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    RefundRequest:
+      type: object
+      required:
+        - merchant_key
+        - payment_id
+        - amount
+        - hash
+      properties:
+        merchant_key:
+          type: string
+          description: Key for Merchant identification
+          example: xxxxx-xxxxx-xxxxx
+        payment_id:
+          type: string
+          maxLength: 255
+          description: Payment ID (public)
+          example: dc66cdd8-d702-11ea-9a2f-0242c0a87002
+        amount:
+          type: string
+          pattern: "^[1-9][0-9]*\\.?[0-9]{0,2}$"
+          description: Amount to refund (format XX.XX, no leading zeroes)
+          example: "0.19"
+        hash:
+          type: string
+          description: >
+            Signature to validate the request.
+            Must be SHA1 of MD5 encoded string (uppercased): payment_id + amount + merchant_pass
+          example: "A1B2C3D4E5F67890123456789ABCDEF123456789"
+
+    RefundResponse:
+      type: object
+      required:
+        - payment_id
+        - result
+      properties:
+        payment_id:
+          type: string
+          maxLength: 255
+          description: Transaction ID (public)
+          example: dc66cdd8-d702-11ea-9a2f-0242c0a87002
+        result:
+          type: string
+          description: Refund request result
+          example: accepted
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: invalid_request
+        message:
+          type: string
+          description: Human-readable error message
+          example: Missing required parameter 'payment_id'.

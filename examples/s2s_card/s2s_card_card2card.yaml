@@ -1,0 +1,438 @@
+openapi: 3.0.3
+info:
+  title: CARD2CARD API
+  version: 1.0.0
+  description: |
+    **CARD2CARD protocol** creates a transfer transaction between two credit cards (Payer → Payee).
+    
+    - Use `channel_id` to target a specific sub‑account when required.
+    - All requests are sent via HTTP **POST** (e.g. with cURL).
+    - Amount formatting rules: `XXXX.XX` (two‑decimal, even for zero‑exponent currencies like JPY → `100.00`).
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Card2Card
+      operationId: card2card
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - action
+                - client_key
+                - order_id
+                - order_amount
+                - order_currency
+                - order_description
+                - payer_card_number
+                - payer_card_exp_month
+                - payer_card_exp_year
+                - payer_card_cvv2
+                - payer_ip
+                - payee_card_number
+                - term_url_3ds
+                - hash
+              properties:
+                # --- Core fields ----------------------------------------------------
+                action:
+                  type: string
+                  enum: [CARD2CARD]
+                  description: Fixed action name
+                  example: CARD2CARD
+                client_key:
+                  type: string
+                  format: uuid
+                  description: Unique client key (CLIENT_KEY)
+                  example: 550e8400-e29b-41d4-a716-446655440000
+                channel_id:
+                  type: string
+                  maxLength: 16
+                  description: Optional sub‑account identifier
+                  example: web01
+                order_id:
+                  type: string
+                  maxLength: 255
+                  description: Merchant‑side transaction ID
+                  example: ORD-20002
+                order_amount:
+                  type: number
+                  format: float
+                  description: Transaction amount, always `XXXX.XX` format
+                  example: 99.99
+                order_currency:
+                  type: string
+                  maxLength: 3
+                  description: ISO 4217 currency code
+                  example: EUR
+                order_description:
+                  type: string
+                  maxLength: 1024
+                  description: Description of goods / services
+                  example: "Gift card purchase"
+
+                # --- Payer card details -------------------------------------------
+                payer_card_number:
+                  type: string
+                  description: Payer card PAN (primary account number)
+                  example: 4111111111111111
+                payer_card_exp_month:
+                  type: string
+                  maxLength: 2
+                  description: Expiry month `MM`
+                  example: "05"
+                payer_card_exp_year:
+                  type: string
+                  maxLength: 4
+                  description: Expiry year `YYYY`
+                  example: "2028"
+                payer_card_cvv2:
+                  type: string
+                  maxLength: 4
+                  description: CVV/CVC2 security code
+                  example: "123"
+
+                # --- Payer identity -----------------------------------------------
+                payer_first_name:
+                  type: string
+                  maxLength: 32
+                  description: Payer given name
+                  example: John
+                payer_last_name:
+                  type: string
+                  maxLength: 32
+                  description: Payer surname
+                  example: Smith
+                payer_middle_name:
+                  type: string
+                  maxLength: 32
+                  description: Payer middle name (optional)
+                  example: Edward
+                payer_birth_date:
+                  type: string
+                  format: date
+                  description: Birthday `YYYY-MM-DD`
+                  example: 1985-08-15
+                payer_address:
+                  type: string
+                  maxLength: 255
+                  description: Street address
+                  example: 12 Baker Street
+                payer_address2:
+                  type: string
+                  maxLength: 255
+                  description: Additional address details
+                  example: Apt 4B
+                payer_country:
+                  type: string
+                  maxLength: 2
+                  description: 2‑letter country code
+                  example: GB
+                payer_state:
+                  type: string
+                  maxLength: 32
+                  description: State / Province
+                  example: London
+                payer_city:
+                  type: string
+                  maxLength: 32
+                  description: City
+                  example: London
+                payer_zip:
+                  type: string
+                  maxLength: 10
+                  description: Postal code
+                  example: NW1 6XE
+                payer_email:
+                  type: string
+                  maxLength: 256
+                  description: Email address
+                  example: john.smith@example.co.uk
+                payer_phone:
+                  type: string
+                  maxLength: 32
+                  description: Phone number
+                  example: "+44 20 7946 0958"
+                payer_ip:
+                  type: string
+                  format: ipv4
+                  description: Customer IP address
+                  example: 203.0.113.42
+
+                # --- Payee card & identity ----------------------------------------
+                payee_card_number:
+                  type: string
+                  description: Payee card PAN
+                  example: 5555555555554444
+                payee_first_name:
+                  type: string
+                  maxLength: 32
+                  description: Payee given name
+                  example: Alice
+                payee_last_name:
+                  type: string
+                  maxLength: 32
+                  description: Payee surname
+                  example: Brown
+                payee_middle_name:
+                  type: string
+                  maxLength: 32
+                  description: Payee middle name (optional)
+                  example: Maria
+                payee_birth_date:
+                  type: string
+                  format: date
+                  description: Payee birthday `YYYY-MM-DD`
+                  example: 1992-03-20
+                payee_address:
+                  type: string
+                  maxLength: 255
+                  description: Payee street address
+                  example: 34 Oak Street
+                payee_address2:
+                  type: string
+                  maxLength: 255
+                  description: Additional address information
+                  example: Unit 7
+                payee_country:
+                  type: string
+                  maxLength: 2
+                  description: Payee 2‑letter country code
+                  example: US
+                payee_state:
+                  type: string
+                  maxLength: 32
+                  description: Payee state / region
+                  example: CA
+                payee_city:
+                  type: string
+                  maxLength: 32
+                  description: Payee city
+                  example: San Francisco
+                payee_zip:
+                  type: string
+                  maxLength: 10
+                  description: Payee postal code
+                  example: 94105
+                payee_email:
+                  type: string
+                  maxLength: 256
+                  description: Payee email
+                  example: alice.brown@example.com
+                payee_phone:
+                  type: string
+                  maxLength: 32
+                  description: Payee phone number
+                  example: "+1 415 555 0133"
+
+                # --- 3‑D Secure & extras -----------------------------------------
+                term_url_3ds:
+                  type: string
+                  maxLength: 1024
+                  description: URL to return customer after 3DS authentication
+                  example: https://merchant.example.com/3ds/result
+                parameters:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  description: Extra acquirer parameters
+                  example:
+                    loyalty_id: "L1234567"
+                    campaign: "spring_sale"
+                hash:
+                  type: string
+                  description: Request signature (see Appendix A, Formula 1)
+                  example: "d41d8cd98f00b204e9800998ecf8427e"
+      responses:
+        "200":
+          description: CARD2CARD response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Card2CardSuccess"
+                  - $ref: "#/components/schemas/Card2CardDeclined"
+                  - $ref: "#/components/schemas/Card2CardRedirect"
+                  - $ref: "#/components/schemas/Card2CardUndefined"
+
+components:
+  schemas:
+    # ---------------------------------------------------------------------------
+    Card2CardSuccess:
+      type: object
+      required: [action, result, status, order_id, trans_id, trans_date, amount, currency]
+      properties:
+        action:
+          type: string
+          enum: [CARD2CARD]
+          example: CARD2CARD
+        result:
+          type: string
+          enum: [SUCCESS]
+          example: SUCCESS
+        status:
+          type: string
+          enum: [SETTLED]
+          example: SETTLED
+        order_id:
+          type: string
+          example: ORD-20002
+        trans_id:
+          type: string
+          example: TRX987654321
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T14:20:00Z
+        descriptor:
+          type: string
+          example: merchant.com/support
+        amount:
+          type: number
+          format: float
+          example: 99.99
+        currency:
+          type: string
+          example: EUR
+
+    # ---------------------------------------------------------------------------
+    Card2CardDeclined:
+      type: object
+      required: [action, result, status, order_id, trans_id, trans_date, amount, currency, decline_reason]
+      properties:
+        action:
+          type: string
+          enum: [CARD2CARD]
+          example: CARD2CARD
+        result:
+          type: string
+          enum: [DECLINED]
+          example: DECLINED
+        status:
+          type: string
+          enum: [DECLINED]
+          example: DECLINED
+        order_id:
+          type: string
+          example: ORD-20002
+        trans_id:
+          type: string
+          example: TRX987654321
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T14:20:00Z
+        descriptor:
+          type: string
+          example: merchant.com/support
+        amount:
+          type: number
+          format: float
+          example: 99.99
+        currency:
+          type: string
+          example: EUR
+        decline_reason:
+          type: string
+          example: Insufficient funds
+
+    # ---------------------------------------------------------------------------
+    Card2CardRedirect:
+      type: object
+      required: [action, result, status, order_id, trans_id, trans_date, amount, currency, redirect_url, redirect_method]
+      properties:
+        action:
+          type: string
+          enum: [CARD2CARD]
+          example: CARD2CARD
+        result:
+          type: string
+          enum: [REDIRECT]
+          example: REDIRECT
+        status:
+          type: string
+          enum: ["3DS", "REDIRECT"]
+          example: 3DS
+        order_id:
+          type: string
+          example: ORD-20002
+        trans_id:
+          type: string
+          example: TRX987654321
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T14:20:00Z
+        descriptor:
+          type: string
+          example: merchant.com/support
+        amount:
+          type: number
+          format: float
+          example: 99.99
+        currency:
+          type: string
+          example: EUR
+        redirect_url:
+          type: string
+          example: https://3ds.acquirer.com/auth
+        redirect_method:
+          type: string
+          enum: [POST, GET]
+          example: POST
+        redirect_params:
+          oneOf:
+            - type: object
+              additionalProperties:
+                type: string
+              example:
+                PaReq: "eJxVUttygjAQ/RVHZhzOPXckKxI5St0h7Zr0yQk1ZpiURyG/p2D0+sjbfX72333+3Wud7psiW/aTalbK03mqNs93B8vGkVDsy2VwkO0iBlEDL2Wwh6bcQ2+0c0huGo6fyHVlruyQRnIEfY5jmagyTZanmXAJOKTSvnaczDC5IU0J9pZuAzw7yY6xD1gKb+gVgfaGYt7vc6Ks/QHctpe"
+            - type: array
+              items:
+                type: string
+              example: []
+
+    # ---------------------------------------------------------------------------
+    Card2CardUndefined:
+      type: object
+      required: [action, result, status, order_id, trans_id, trans_date, amount, currency]
+      properties:
+        action:
+          type: string
+          enum: [CARD2CARD]
+          example: CARD2CARD
+        result:
+          type: string
+          enum: [UNDEFINED]
+          example: UNDEFINED
+        status:
+          type: string
+          enum:
+            - "3DS"
+            - "REDIRECT"
+            - "PREPARE"
+          example: PREPARE
+        order_id:
+          type: string
+          example: ORD-20002
+        trans_id:
+          type: string
+          example: TRX987654321
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T14:20:00Z
+        descriptor:
+          type: string
+          example: merchant.com/support
+        amount:
+          type: number
+          format: float
+          example: 99.99
+        currency:
+          type: string
+          example: EUR

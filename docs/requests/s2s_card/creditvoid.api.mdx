@@ -1,0 +1,71 @@
+---
+id: creditvoid
+title: "Creditvoid (refund / reversal)"
+description: "Creditvoid (refund / reversal)"
+sidebar_label: "Creditvoid (refund / reversal)"
+hide_title: true
+hide_table_of_contents: true
+api: eJzNVltv4jgU/iuWX3ZGSmigQFveWEolpNktAjovUI2MfSieTezUlxaE8t9XJxea9DbtzsvyEmznfOf2nc85UMfuLB0s6bwzJyNmBL0NqE7BMCe1mgg6oNyAkO5BS0EDauDeg3V/arGng0O+lAYEHTjjIaBcKwfK4RFL01jyHOZkFz4+PoYbbZLQmxgU1wJtDtTyLSQM/7l9CnRA9foncFc6KpCXlHFEoQHlsQTlfvwDexpQZ5iyP/KotsxuMfDUYOhOgs0jKMyewK0zUt3RgILyCQKPZuPLyeL79eQSrQVYbmRaGNFhbk3QNCAbuQNBVjWDFUWcHUvSGKFrSFkjzle8Yx2YowPqfR590++NkvceSAFBilSf/LQ7p9Dt9c9COL9Yh+2OOA1Zt9cPu51+v91tn3WjKMIIjsX5tP8FWhalI5NLIhWZsn2CsUxj5tC2EZDoQm/TPzsP253TbtjDfxdszUMBmwi3cAcDYon2BTHKcJRP1mBeuJ/BxitBitfJF53vs/hra6UmG6IT6RyIgGx8HBNTvCstkdZ6EK2VuspzIwJSUMISrQj3xoDiewK7VCtQrrVS9QzaUZSVDHqlVs3g5vJOMecNEKfJA4ulYA5IORONsrA1F7CpCnARvbWmGTZLuoJEx0mblZDZETNnNGZdFGhceTpQ65OEmT0d0KtaUcqgSBVSQB9Y7KE+F3XSNjn7MZrVWfYxHlR1/lx5UmacZO8lPi3e+J/nXo1AL/ovdcAfyqJNtbIFHTpRhI9nHN0rvjVaaW/JU5KkMqRvivRPW4jlJzXZgPUxnmojwBR6fKzNb2vyWwpben0HZzgajaeL8TOU425WC/iXc/8XGL5lyv1hiWvIY2Pmr2eX41l4cX7W73VPO+3fk+Hnovue449p8KtCg2yZVdR4pjaMc0gdiON5Y+aqShJbI1yNZb8YuaqBTx2pN+RFLT8/b1k1Ms26PqVOvpRycUIMPICxLP5KA5qA22r0kupc01PmcFJPyqVUG513syzliz7VZm44nWAhwNjCd7sVtaIXnW4MaSFcXGMTHFgyG1/d/H1JmBJkNv4+ns2H3+pMsK2VWqnjCWeKQ2zJVscC7z5MzxJtygTBHpEFEbCWro5VQuX+DDhvlC0BnCacGUEY5/mtnBp4kNrbeE+sXxdXMlnvyXz4bYzeRsPp4mY2xosW5Vtbl7B85hVL4CM9aBToODkOdu4kjZnMYb2J8axoz7Lo1m1At/gcLOnhsGYWbkycZbh97wFZu7xFYhrJ1ti85S3e/MAEGDpYHmih/6NCHsMFej3y+APfs1lQQQzzyXnDONfZ7LbGtOn1fEEDui4/qhMt0KaGHNQXGHaW/QtjeNgo
+sidebar_class_name: "post api-method"
+info_path: docs/requests/s2s_card/payment-platform-creditvoid-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Creditvoid (refund / reversal)"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/post"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Creditvoid (refund / reversal)
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"required":true,"content":{"application/x-www-form-urlencoded":{"schema":{"type":"object","required":["action","client_key","trans_id","hash"],"properties":{"action":{"type":"string","enum":["CREDITVOID"],"description":"Action type, fixed \"CREDITVOID\"","example":"CREDITVOID"},"client_key":{"type":"string","format":"uuid","description":"Unique client key","example":"123e4567-e89b-12d3-a456-426614174000"},"trans_id":{"type":"string","format":"uuid","description":"Transaction ID in Payment Platform","example":"d4e5f678-1234-5678-9abc-def012345678"},"amount":{"type":"number","description":"Refund amount (optional).\nIf omitted, full refund is issued.\nFormat depends on currency exponent.\n","example":100},"hash":{"type":"string","description":"Signature to validate request","example":"abcdef1234567890abcdef1234567890abcdef12"}},"title":"CreditvoidRequest"},"examples":{"fullRefundExample":{"summary":"Full refund request example","value":{"action":"CREDITVOID","client_key":"123e4567-e89b-12d3-a456-426614174000","trans_id":"d4e5f678-1234-5678-9abc-def012345678","hash":"abcdef1234567890abcdef1234567890abcdef12"}},"partialRefundExample":{"summary":"Partial refund request example","value":{"action":"CREDITVOID","client_key":"123e4567-e89b-12d3-a456-426614174000","trans_id":"d4e5f678-1234-5678-9abc-def012345678","amount":50,"hash":"abcdef1234567890abcdef1234567890abcdef12"}}}}}}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Synchronous CREDITVOID response","content":{"application/json":{"schema":{"type":"object","required":["action","result","order_id","trans_id"],"properties":{"action":{"type":"string","enum":["CREDITVOID"],"example":"CREDITVOID"},"result":{"type":"string","enum":["ACCEPTED"],"example":"ACCEPTED"},"order_id":{"type":"string","description":"Merchant's transaction ID","example":"ORDER-987654321"},"trans_id":{"type":"string","format":"uuid","description":"Payment Platform transaction ID","example":"d4e5f678-1234-5678-9abc-def012345678"}},"title":"CreditvoidSyncResponse"},"examples":{"acceptedResponse":{"summary":"ACCEPTED synchronous response","value":{"action":"CREDITVOID","result":"ACCEPTED","order_id":"ORDER-987654321","trans_id":"d4e5f678-1234-5678-9abc-def012345678"}}}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

@@ -1,0 +1,216 @@
+openapi: 3.0.3
+info:
+  title: Recurring Payment API
+  version: 1.0.0
+  description: >
+    API for initiating recurring payments based on stored cardholder information.
+
+# servers:
+#   - url: https://{CHECKOUT_HOST}
+#     description: Checkout host URL
+#     variables:
+#       CHECKOUT_HOST:
+#         default: example.domain.com
+#         description: Host for the payment platform
+
+paths:
+  /api/v1/payment/recurring:
+    post:
+      summary: Recurring Sale
+      operationId: recurring
+      description: >
+        Create a new recurring payment transaction using stored cardholder data.
+        Requires merchant authentication and signature validation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurringPaymentRequest'
+            examples:
+              settled:
+                summary: Example settled recurring payment request
+                value:
+                  merchant_key: "xxxxx-xxxxx-xxxxx"
+                  recurring_init_trans_id: "dc66cdd8-d702-11ea-9a2f-0242c0a87002"
+                  recurring_token: "9a2f-0242c0a87002"
+                  schedule_id: "57fddecf-17b9-4d38-9320-a670f0c29ec0"
+                  hash: "{{session_hash}}"
+                  order:
+                    number: "order-1234"
+                    amount: 0.19
+                    description: "very important gift"
+                  customer:
+                    name: "John Doe"
+                    email: "success@gmail.com"
+              declined:
+                summary: Example declined recurring payment response
+                value:
+                  payment_id: "1f34f446-fc45-11ec-a50f-0242ac120004"
+                  date: "2022-07-05 09:30:34"
+                  status: "declined"
+                  reason: "Declined by processing."
+                  order:
+                    number: "order-1234"
+                    amount: "3.01"
+                    currency: "USD"
+                    description: "bloodline"
+                  customer:
+                    name: "John Doe"
+                    email: "success@gmail.com"
+      responses:
+        '200':
+          description: Recurring payment processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringPaymentResponse'
+        '400':
+          description: Invalid request parameters
+        '401':
+          description: Unauthorized - invalid merchant key or hash
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    RecurringPaymentRequest:
+      type: object
+      required:
+        - merchant_key
+        - recurring_init_trans_id
+        - recurring_token
+        - hash
+        - order
+      properties:
+        merchant_key:
+          type: string
+          description: Merchant identification key
+          example: "xxxxx-xxxxx-xxxxx"
+        recurring_init_trans_id:
+          type: string
+          description: Transaction ID of the primary transaction
+          example: "dc66cdd8-d702-11ea-9a2f-0242c0a87002"
+        recurring_token:
+          type: string
+          description: Token for recurring payment authorization
+          example: "9a2f-0242c0a87002"
+        schedule_id:
+          type: string
+          description: Schedule ID for recurring payments (optional)
+          example: "57fddecf-17b9-4d38-9320-a670f0c29ec0"
+        hash:
+          type: string
+          description: SHA1(MD5(recurring_init_trans_id + recurring_token + order.number + order.amount + order.description + merchant_pass))
+          example: "{{session_hash}}"
+        order:
+          type: object
+          required:
+            - number
+            - amount
+            - description
+          properties:
+            number:
+              type: string
+              description: Order ID, max 255 chars, allowed [a-zA-Z0-9-]
+              maxLength: 255
+              pattern: "^[a-zA-Z0-9-]+$"
+              example: "order-1234"
+            amount:
+              type: number
+              description: Amount formatted according to currency exponent rules; must be > 0
+              minimum: 0.01
+              maximum: 999999999
+              example: 0.19
+            description:
+              type: string
+              description: Product name or description, 2 to 1024 chars, allowed chars [a-zA-Z0-9!\"#$%&'()*+,./:;&@]
+              minLength: 2
+              maxLength: 1024
+              pattern: "^[a-zA-Z0-9!\"#$%&'()*+,./:;&@\\s-]+$"
+              example: "very important gift"
+        customer:
+          type: object
+          description: Customer information (optional)
+          properties:
+            name:
+              type: string
+              minLength: 2
+              maxLength: 32
+              example: "John Doe"
+            email:
+              type: string
+              format: email
+              minLength: 2
+              maxLength: 255
+              example: "success@gmail.com"
+
+    RecurringPaymentResponse:
+      type: object
+      required:
+        - status
+        - payment_id
+        - date
+        - order
+      properties:
+        status:
+          type: string
+          description: Payment status (e.g. SETTLED, PENDING, DECLINED)
+          example: "settled"
+        reason:
+          type: string
+          description: Decline reason if status is unsuccessful (optional)
+          example: "Declined by processing."
+        payment_id:
+          type: string
+          maxLength: 255
+          description: Public transaction ID
+          example: "dc66cdd8-d702-11ea-9a2f-0242ac120006"
+        date:
+          type: string
+          description: Transaction date/time (YYYY-MM-DD hh:mm:ss)
+          pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          example: "2020-08-05 07:41:10"
+        schedule_id:
+          type: string
+          description: Schedule ID for recurring payments (optional)
+          example: "57fddecf-17b9-4d38-9320-a670f0c29ec0"
+        order:
+          type: object
+          required:
+            - number
+            - amount
+            - currency
+            - description
+          properties:
+            number:
+              type: string
+              maxLength: 255
+              description: Order ID
+              example: "order-1234"
+            amount:
+              type: string
+              description: Product price, format XX.XX
+              example: "0.19"
+            currency:
+              type: string
+              minLength: 3
+              maxLength: 3
+              description: Currency code
+              example: "USD"
+            description:
+              type: string
+              maxLength: 1024
+              description: Product name/description
+              example: "very important gift"
+        customer:
+          type: object
+          description: Customer information (optional)
+          properties:
+            name:
+              type: string
+              example: "John Doe"
+            email:
+              type: string
+              format: email
+              example: "success@gmail.com"

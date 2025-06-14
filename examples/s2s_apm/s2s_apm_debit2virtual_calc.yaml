@@ -1,0 +1,267 @@
+openapi: 3.0.3
+info:
+  title: DEBIT2VIRTUAL_CALC API
+  version: 1.0.0
+  description: >
+    The DEBIT2VIRTUAL_CALC request is used to simulate a DEBIT2VIRTUAL transaction to get commission and total cost before proceeding with actual payment.
+
+# servers:
+#   - url: https://{PAYMENT_API_HOST}
+#     description: Payment Platform API server
+#     variables:
+#       PAYMENT_API_HOST:
+#         default: api.paymentplatform.com
+
+paths:
+  /api/v1/payment/debit2virtual_calc:
+    post:
+      summary: Calculate debit commission
+      operationId: debit2virtual_calc
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Debit2VirtualCalcRequest'
+            example:
+              action: DEBIT2VIRTUAL_CALC
+              client_key: "abc123-456-def789"
+              order_id: "ORD987654"
+              order_amount: 250.00
+              order_currency: "EUR"
+              order_description: "Test Transaction"
+              identifier: "account-identifier-001"
+              brand: "MASTERCARD"
+              payer_first_name: "Alice"
+              payer_last_name: "Smith"
+              payer_middle_name: "B"
+              payer_birth_date: "1990-07-15"
+              payer_address: "123 Main Street"
+              payer_address2: "Suite 5A"
+              payer_country: "DE"
+              payer_state: "BE"
+              payer_city: "Berlin"
+              payer_zip: "10115"
+              payer_email: "alice.smith@example.com"
+              payer_phone: "+491234567890"
+              payer_ip: "203.0.113.42"
+              payer_return_url: "https://merchant.com/return"
+              hash: "d41d8cd98f00b204e9800998ecf8427e"
+      responses:
+        '200':
+          description: Debit commission calculation response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DebitCalcSuccessResponse'
+                  - $ref: '#/components/schemas/DebitCalcDeclinedResponse'
+
+components:
+  schemas:
+    Debit2VirtualCalcRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - order_id
+        - order_amount
+        - order_currency
+        - order_description
+        - identifier
+        - brand
+        - payer_address
+        - payer_ip
+        - payer_return_url
+        - hash
+      properties:
+        action:
+          type: string
+          enum: [DEBIT2VIRTUAL_CALC]
+          example: DEBIT2VIRTUAL_CALC
+        client_key:
+          type: string
+          format: uuid
+          example: abc123-456-def789
+        order_id:
+          type: string
+          maxLength: 255
+          example: ORD987654
+        order_amount:
+          type: number
+          format: float
+          example: 250.00
+        order_currency:
+          type: string
+          maxLength: 3
+          example: EUR
+        order_description:
+          type: string
+          maxLength: 1024
+          example: Test Transaction
+        identifier:
+          type: string
+          maxLength: 255
+          example: account-identifier-001
+        brand:
+          type: string
+          maxLength: 36
+          example: MASTERCARD
+        payer_first_name:
+          type: string
+          example: Alice
+        payer_last_name:
+          type: string
+          example: Smith
+        payer_middle_name:
+          type: string
+          example: B
+        payer_birth_date:
+          type: string
+          format: date
+          example: "1990-07-15"
+        payer_address:
+          type: string
+          example: 123 Main Street
+        payer_address2:
+          type: string
+          example: Suite 5A
+        payer_country:
+          type: string
+          example: DE
+        payer_state:
+          type: string
+          example: BE
+        payer_city:
+          type: string
+          example: Berlin
+        payer_zip:
+          type: string
+          example: "10115"
+        payer_email:
+          type: string
+          format: email
+          example: alice.smith@example.com
+        payer_phone:
+          type: string
+          example: "+491234567890"
+        payer_ip:
+          type: string
+          format: ipv4
+          example: "203.0.113.42"
+        payer_return_url:
+          type: string
+          format: uri
+          example: https://merchant.com/return
+        hash:
+          type: string
+          description: Signature to validate request
+          example: d41d8cd98f00b204e9800998ecf8427e
+
+    DebitCalcSuccessResponse:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - descriptor
+        - amount
+        - currency
+        - commission
+        - total_amount
+      properties:
+        action:
+          type: string
+          example: DEBIT2VIRTUAL_CALC
+        result:
+          type: string
+          example: SUCCESS
+        status:
+          type: string
+          example: PREPARE
+        order_id:
+          type: string
+          example: ORD987654
+        trans_id:
+          type: string
+          example: calc-tx-001
+        trans_date:
+          type: string
+          format: date-time
+          example: "2025-06-09T12:34:56Z"
+        descriptor:
+          type: string
+          example: Debit Simulation
+        amount:
+          type: number
+          example: 250.00
+        currency:
+          type: string
+          example: EUR
+        commission:
+          type: number
+          example: 5.00
+        total_amount:
+          type: number
+          example: 255.00
+
+    DebitCalcDeclinedResponse:
+      allOf:
+        - $ref: '#/components/schemas/DebitCalcSuccessResponse'
+        - type: object
+          required:
+            - result
+            - status
+            - decline_reason
+          properties:
+            result:
+              type: string
+              example: DECLINED
+            status:
+              type: string
+              example: DECLINED
+            decline_reason:
+              type: string
+              example: Invalid card brand
+
+    DebitCalcCallback:
+      allOf:
+        - $ref: '#/components/schemas/DebitCalcSuccessResponse'
+        - type: object
+          required:
+            - hash
+          properties:
+            connector_name:
+              type: string
+              example: SimulatedConnector
+            rrn:
+              type: string
+              example: "123456789012"
+            approval_code:
+              type: string
+              example: "APPROVAL123"
+            gateway_id:
+              type: string
+              example: "gw-sim-001"
+            extra_gateway_id:
+              type: string
+              example: "gw-extra-sim-001"
+            merchant_name:
+              type: string
+              example: SimMerchant
+            mid_name:
+              type: string
+              example: mid-sim-merchant
+            issuer_country:
+              type: string
+              example: FR
+            issuer_bank:
+              type: string
+              example: BNP Paribas
+            hash:
+              type: string
+              description: Signature for callback validation
+              example: d41d8cd98f00b204e9800998ecf8427e

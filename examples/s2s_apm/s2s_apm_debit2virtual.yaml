@@ -1,0 +1,296 @@
+openapi: 3.0.3
+info:
+  title: DEBIT2VIRTUAL API
+  version: 1.0.0
+  description: >
+    The DEBIT2VIRTUAL request is used to create one-step debit transactions, allowing commissions and customizable transaction parameters.
+
+# servers:
+#   - url: https://{PAYMENT_API_HOST}
+#     description: Payment Platform API server
+#     variables:
+#       PAYMENT_API_HOST:
+#         default: api.paymentplatform.com
+
+paths:
+  /api/v1/payment/debit2virtual:
+    post:
+      summary: Debit2Virtual
+      operationId: debit2virtual
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Debit2VirtualRequest'
+            example:
+              action: DEBIT2VIRTUAL
+              client_key: "abc123-456-def789"
+              order_id: "ORD123456"
+              order_amount: 100.00
+              order_currency: "USD"
+              order_description: "Payment for Order #123"
+              identifier: "customer-token-123"
+              brand: "VISA"
+              payer_first_name: "John"
+              payer_last_name: "Doe"
+              payer_middle_name: "M"
+              payer_birth_date: "1980-01-01"
+              payer_address: "123 Main St"
+              payer_address2: "Apt 4B"
+              payer_country: "US"
+              payer_state: "NY"
+              payer_city: "New York"
+              payer_zip: "10001"
+              payer_email: "john.doe@example.com"
+              payer_phone: "+1234567890"
+              payer_ip: "192.168.1.1"
+              payer_return_url: "https://merchant.com/return"
+              hash: "d41d8cd98f00b204e9800998ecf8427e"
+      responses:
+        '200':
+          description: Debit transaction response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DebitSuccessResponse'
+                  - $ref: '#/components/schemas/DebitDeclinedResponse'
+                  - $ref: '#/components/schemas/DebitUndefinedResponse'
+
+components:
+  schemas:
+    Debit2VirtualRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - order_id
+        - order_amount
+        - order_currency
+        - order_description
+        - identifier
+        - brand
+        - payer_ip
+        - payer_return_url
+        - hash
+      properties:
+        action:
+          type: string
+          enum: [DEBIT2VIRTUAL]
+          example: DEBIT2VIRTUAL
+        client_key:
+          type: string
+          format: uuid
+          example: abc123-456-def789
+        order_id:
+          type: string
+          maxLength: 255
+          example: ORD123456
+        order_amount:
+          type: number
+          format: float
+          example: 100.00
+        order_currency:
+          type: string
+          maxLength: 3
+          example: USD
+        order_description:
+          type: string
+          maxLength: 1024
+          example: Payment for Order #123
+        identifier:
+          type: string
+          maxLength: 255
+          example: customer-token-123
+        brand:
+          type: string
+          maxLength: 36
+          example: VISA
+        payer_first_name:
+          type: string
+          maxLength: 32
+          example: John
+        payer_last_name:
+          type: string
+          maxLength: 32
+          example: Doe
+        payer_middle_name:
+          type: string
+          maxLength: 32
+          example: M
+        payer_birth_date:
+          type: string
+          format: date
+          example: "1980-01-01"
+        payer_address:
+          type: string
+          example: 123 Main St
+        payer_address2:
+          type: string
+          example: Apt 4B
+        payer_country:
+          type: string
+          example: US
+        payer_state:
+          type: string
+          example: NY
+        payer_city:
+          type: string
+          example: New York
+        payer_zip:
+          type: string
+          example: "10001"
+        payer_email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        payer_phone:
+          type: string
+          example: "+1234567890"
+        payer_ip:
+          type: string
+          format: ipv4
+          example: "192.168.1.1"
+        payer_return_url:
+          type: string
+          format: uri
+          example: https://merchant.com/return
+        hash:
+          type: string
+          description: Signature to validate request
+          example: d41d8cd98f00b204e9800998ecf8427e
+
+    DebitSuccessResponse:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - descriptor
+        - amount
+        - currency
+        - commission
+        - total_amount
+      properties:
+        action:
+          type: string
+          example: DEBIT2VIRTUAL
+        result:
+          type: string
+          example: SUCCESS
+        status:
+          type: string
+          enum: [3DS, REDIRECT, SETTLED]
+        order_id:
+          type: string
+          example: ORD123456
+        trans_id:
+          type: string
+          example: "tx-987654321"
+        trans_date:
+          type: string
+          format: date-time
+          example: "2025-06-09T13:15:30Z"
+        descriptor:
+          type: string
+          example: Virtual debit
+        amount:
+          type: number
+          example: 100.00
+        currency:
+          type: string
+          example: USD
+        commission:
+          type: number
+          example: 2.50
+        total_amount:
+          type: number
+          example: 102.50
+
+    DebitDeclinedResponse:
+      allOf:
+        - $ref: '#/components/schemas/DebitSuccessResponse'
+        - type: object
+          required:
+            - result
+            - status
+            - decline_reason
+          properties:
+            result:
+              type: string
+              example: DECLINED
+            status:
+              type: string
+              example: DECLINED
+            decline_reason:
+              type: string
+              example: Insufficient funds
+
+    DebitUndefinedResponse:
+      allOf:
+        - $ref: '#/components/schemas/DebitSuccessResponse'
+        - type: object
+          required:
+            - result
+            - status
+          properties:
+            result:
+              type: string
+              example: UNDEFINED
+            status:
+              type: string
+              enum: [REDIRECT, PREPARE]
+              example: PREPARE
+
+    DebitCallback:
+      allOf:
+        - $ref: '#/components/schemas/DebitSuccessResponse'
+        - type: object
+          required:
+            - result
+            - status
+            - hash
+          properties:
+            result:
+              type: string
+              enum: [SUCCESS, DECLINED, UNDEFINED]
+              example: SUCCESS
+            status:
+              type: string
+              enum: [3DS, REDIRECT, SETTLED, DECLINED, PREPARE]
+              example: SETTLED
+            connector_name:
+              type: string
+              example: StripeConnector
+            rrn:
+              type: string
+              example: "123456789012"
+            approval_code:
+              type: string
+              example: "APPROVED123"
+            gateway_id:
+              type: string
+              example: "gw-001"
+            extra_gateway_id:
+              type: string
+              example: "gw-extra-999"
+            merchant_name:
+              type: string
+              example: My Online Store
+            mid_name:
+              type: string
+              example: mid-store-01
+            issuer_country:
+              type: string
+              example: US
+            issuer_bank:
+              type: string
+              example: Bank of America
+            hash:
+              type: string
+              description: Signature for callback validation
+              example: d41d8cd98f00b204e9800998ecf8427e

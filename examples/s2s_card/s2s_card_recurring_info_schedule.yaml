@@ -1,0 +1,85 @@
+openapi: 3.0.3
+info:
+  title: Schedule Information API
+  version: 1.0.0
+  description: |
+    API to retrieve information about a scheduled payment.
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Recurring Schedule Information
+      operationId: recurring_info_schedule
+      description: API to retrieve information about a scheduled payment.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - action
+                - client_key
+                - schedule_id
+                - hash
+              properties:
+                action:
+                  type: string
+                  enum: [SCHEDULE_INFO]
+                  description: Action to get a schedule info - fixed value
+                client_key:
+                  type: string
+                  format: uuid
+                  description: Unique key (CLIENT_KEY)
+                schedule_id:
+                  type: string
+                  format: uuid
+                  description: Schedule ID in the Payment Platform
+                hash:
+                  type: string
+                  description: Special signature to validate your request (see Appendix A, Formula 4)
+      responses:
+        '200':
+          description: Successful response with schedule information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    example: SCHEDULE_INFO
+                  name:
+                    type: string
+                    example: Monthly Subscription
+                  interval_length:
+                    type: integer
+                    example: 1
+                  interval_unit:
+                    type: string
+                    example: month
+                  day_of_month:
+                    type: integer
+                    nullable: true
+                    example: 15
+                  payments_count:
+                    type: integer
+                    example: 12
+                  delays:
+                    type: integer
+                    example: 0
+                  paused:
+                    type: string
+                    enum: [Y, N]
+                    example: N
+        '400':
+          description: Bad request due to missing or invalid parameters
+        '401':
+          description: Unauthorized - invalid hash
+        '404':
+          description: Schedule not found
+
+components:
+  schemas: {}

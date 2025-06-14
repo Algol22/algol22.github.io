@@ -1,0 +1,113 @@
+openapi: 3.0.3
+info:
+  title: Payment Retry API
+  version: 1.0.0
+  description: |
+    RETRY request is used to retry funds charging for secondary recurring payments
+    in case of soft decline. This action creates RETRY transaction and can cause
+    payment final status changing.
+
+# servers:
+#   - url: https://{CHECKOUT_HOST}
+#     description: Payment Platform API server
+#     variables:
+#       CHECKOUT_HOST:
+#         default: api.paymentplatform.com
+#         description: Hostname for the Payment Platform API
+
+paths:
+  /api/v1/payment/retry:
+    post:
+      summary: Retry payment
+      operationId: retry
+      description: |
+        Retry funds charging for secondary recurring payments in case of soft decline.
+        This request creates a RETRY transaction and may change the payment final status.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetryRequest'
+            example:
+              merchant_key: xxxxx-xxxxx-xxxxx
+              payment_id: 63c781cc-de3d-11eb-a1f1-0242ac130006
+              hash: "E6F1FBC89B5A214C05D1EF34C3A8DB4D0F8A1E1C"
+      responses:
+        '200':
+          description: Retry request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetryResponse'
+              example:
+                payment_id: 63c781cc-de3d-11eb-a1f1-0242ac130006
+                result: accepted
+        '400':
+          description: Bad request (e.g., missing parameters or invalid hash)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (invalid merchant key or hash)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    RetryRequest:
+      type: object
+      required:
+        - merchant_key
+        - payment_id
+        - hash
+      properties:
+        merchant_key:
+          type: string
+          description: Key for Merchant identification
+          example: xxxxx-xxxxx-xxxxx
+        payment_id:
+          type: string
+          description: Payment ID (public)
+          maxLength: 255
+          example: dc66cdd8-d702-11ea-9a2f-0242c0a87002
+        hash:
+          type: string
+          description: >
+            Special signature to validate your request to Payment Platform.
+            Must be SHA1 of MD5 encoded string (uppercased): payment_id + merchant_pass
+          example: "E6F1FBC89B5A214C05D1EF34C3A8DB4D0F8A1E1C"
+
+    RetryResponse:
+      type: object
+      required:
+        - payment_id
+        - result
+      properties:
+        payment_id:
+          type: string
+          description: Payment ID (public)
+          maxLength: 255
+          example: dc66cdd8-d702-11ea-9a2f-0242c0a87002
+        result:
+          type: string
+          description: Retry request result
+          example: accepted
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: invalid_request
+        message:
+          type: string
+          description: Human-readable error message
+          example: Missing required parameter 'payment_id'.

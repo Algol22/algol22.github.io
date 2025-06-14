@@ -1,0 +1,389 @@
+openapi: 3.0.3
+info:
+  title: Payment Checkout API
+  version: 1.0.0
+  description: |
+    API to initiate an authentication session for payment checkout.
+
+# servers:
+#   - url: https://{CHECKOUT_HOST}
+#     description: Checkout host URL
+#     variables:
+#       CHECKOUT_HOST:
+#         default: example.domain.com
+#         description: The host for checkout
+
+paths:
+  /api/v1/session:
+    post:
+      summary: Sale (Authentication session)
+      operationId: sale
+      description: |
+        Merchant sends an authorization request to create an authentication session.
+        On success, a redirect_url is returned for the Checkout page.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionRequest'
+            examples:
+              purchase:
+                summary: Purchase operation example
+                value:
+                  merchant_key: "xxxxx-xxxxx-xxxxx"
+                  operation: "purchase"
+                  methods: ["card", "method1"]
+                  parameters:
+                    card:
+                      param1: "val-1"
+                      param2: "val-2"
+                    method1:
+                      param1: "val-3"
+                      param2: "val-4"
+                  session_expiry: 60
+                  order:
+                    number: "order-1234"
+                    amount: "0.19"
+                    currency: "USD"
+                    description: "Important gift"
+                  cancel_url: "https://example.domain.com/cancel"
+                  success_url: "https://example.domain.com/success"
+                  expiry_url: "https://example.domain.com/expiry"
+                  url_target: "_blank"
+                  customer:
+                    name: "John Doe"
+                    email: "test@gmail.com"
+                  billing_address:
+                    country: "US"
+                    state: "CA"
+                    city: "Los Angeles"
+                    district: "Beverlywood"
+                    address: "Moor Building 35274"
+                    house_number: "17/2"
+                    zip: "123456"
+                    phone: "347771112233"
+                  card_token:
+                    - "f5d6a0ab6fcfb6487a39e2256e50fff3c95aaa97075ee5e539bb662fceff4dc1"
+                  req_token: true
+                  recurring_init: true
+                  schedule_id: "9d0f5cc4-f07b-11ec-abf4-0242ac120006"
+                  hash: "{{session_hash}}"
+      responses:
+        '200':
+          description: Authentication session created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirect_url:
+                    type: string
+                    format: uri
+                    description: URL to redirect the customer to Checkout page
+                    example: "https://example.domain.com/auth/ZXlKMGVYQWlPaUpL..."
+        '400':
+          description: Invalid request parameters
+        '401':
+          description: Unauthorized - invalid merchant key or hash
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    SessionRequest:
+      type: object
+      required:
+        - merchant_key
+        - operation
+        - order
+        - success_url
+        - hash
+      properties:
+        merchant_key:
+          type: string
+          description: Key for Merchant identification
+          example: "xxxxx-xxxxx-xxxxx"
+        operation:
+          type: string
+          description: Defines payment transaction type
+          enum:
+            - purchase
+            - debit
+            - transfer
+          example: purchase
+        methods:
+          type: array
+          description: >
+            Optional array of payment methods to limit available methods on checkout page.
+            Applies only for purchase and debit operations.
+          items:
+            type: string
+          example: ["card", "paypal", "googlepay"]
+        channel_id:
+          type: string
+          maxLength: 16
+          description: >
+            Used to direct payments to a specific sub-account (channel).
+            Must correspond to payment methods if methods array is specified.
+          example: "channel123"
+        session_expiry:
+          type: integer
+          minimum: 1
+          maximum: 720
+          default: 60
+          description: Session expiration time in minutes
+          example: 60
+        success_url:
+          type: string
+          format: uri
+          maxLength: 1024
+          description: URL to redirect after successful payment
+          example: "https://example.domain.com/success"
+        cancel_url:
+          type: string
+          format: uri
+          maxLength: 1024
+          description: URL to redirect after payment cancellation
+          example: "https://example.domain.com/cancel"
+        expiry_url:
+          type: string
+          format: uri
+          maxLength: 1024
+          description: URL to redirect after session expiration
+          example: "https://example.domain.com/expiry"
+        error_url:
+          type: string
+          format: uri
+          maxLength: 1024
+          description: URL to redirect in case of undefined transaction status.
+                       Defaults to cancel_url if not provided.
+          example: "https://example.domain.com/errorurl"
+        url_target:
+          type: string
+          description: Browsing context where the customer should be returned
+          enum: ["_self", "_parent", "_top", "_blank"]
+          example: "_parent"
+        req_token:
+          type: boolean
+          description: Special attribute indicating if tokenization is requested
+          default: false
+          example: false
+        card_token:
+          type: array
+          description: Credit card token values (64 character strings)
+          items:
+            type: string
+            maxLength: 64
+          example:
+            - "f5d6a0ab6fcfb6487a39e2256e50fff3c95aaa97075ee5e539bb662fceff4dc1"
+        recurring_init:
+          type: boolean
+          description: Initializes transaction with possible recurring payments (purchase only)
+          default: false
+          example: true
+        schedule_id:
+          type: string
+          description: Schedule ID for recurring payments (if recurring_init is true)
+          example: "57fddecf-17b9-4d38-9320-a670f0c29ec0"
+        vat_calc:
+          type: boolean
+          description: Whether VAT calculation is required (purchase only)
+          default: false
+          example: false
+        hash:
+          type: string
+          description: Signature for request validation
+          example: "SHA1(MD5(order_number + order_amount + order_currency + order_description + password))"
+        order:
+          type: object
+          required:
+            - number
+            - amount
+            - currency
+            - description
+          properties:
+            number:
+              type: string
+              maxLength: 255
+              description: Order ID
+              example: "order-1234"
+            amount:
+              type: string
+              description: |
+                Amount format depends on currency.
+                For fiat currencies, use integer or float as per exponent rules.
+                For crypto, format as appropriate.
+              example: "100.99"
+            currency:
+              type: string
+              description: ISO 4217 currency code (3-6 chars for crypto)
+              pattern: "^[A-Z]{3,6}$"
+              example: "USD"
+            description:
+              type: string
+              minLength: 2
+              maxLength: 1024
+              description: Product name or order description
+              example: "Very important gift - #9"
+        customer:
+          type: object
+          description: Customer information if payment method requires it
+          properties:
+            name:
+              type: string
+              minLength: 2
+              maxLength: 32
+              pattern: "^[a-zA-Z ]+$"
+              description: Customer's name
+              example: "John Doe"
+            email:
+              type: string
+              format: email
+              minLength: 2
+              maxLength: 255
+              description: Customer's email address
+              example: "example@mail.com"
+            birth_date:
+              type: string
+              format: date
+              description: Payer's birth date in yyyy-mm-dd format
+              example: "1970-02-17"
+        billing_address:
+          type: object
+          description: Billing address information (optional)
+          properties:
+            country:
+              type: string
+              minLength: 2
+              maxLength: 2
+              description: Billing country (ISO 3166-1 alpha-2)
+              example: "US"
+            state:
+              type: string
+              minLength: 2
+              maxLength: 32
+              description: Billing state (for USA, Canada, Australia, Japan, India)
+              example: "CA"
+            city:
+              type: string
+              minLength: 2
+              maxLength: 40
+              description: Billing city
+              example: "Los Angeles"
+            district:
+              type: string
+              minLength: 2
+              maxLength: 32
+              description: City district
+              example: "Beverlywood"
+            address:
+              type: string
+              minLength: 2
+              maxLength: 32
+              description: Billing address line
+              example: "Moor Building"
+            house_number:
+              type: string
+              minLength: 1
+              maxLength: 9
+              description: House number
+              example: "17/2"
+            zip:
+              type: string
+              minLength: 2
+              maxLength: 10
+              description: Billing zip/postal code
+              example: "123456"
+            phone:
+              type: string
+              minLength: 1
+              maxLength: 32
+              pattern: "^[0-9+()\\- ]+$"
+              description: Customer phone number
+              example: "347771112233"
+        payee:
+          type: object
+          description: Payee information (for transfer operation)
+          properties:
+            name:
+              type: string
+              minLength: 2
+              maxLength: 32
+              pattern: "^[a-zA-Z ]+$"
+              description: Payee's name
+              example: "John Doe"
+            email:
+              type: string
+              format: email
+              description: Payee's email address
+              example: "example@mail.com"
+        payee_billing_address:
+          type: object
+          description: Billing address for Payee (optional)
+          properties:
+            country:
+              type: string
+              minLength: 2
+              maxLength: 2
+              description: Billing country (ISO 3166-1 alpha-2)
+              example: "US"
+            state:
+              type: string
+              minLength: 2
+              maxLength: 32
+              description: Billing state
+              example: "CA"
+            city:
+              type: string
+              minLength: 2
+              maxLength: 40
+              description: Billing city
+              example: "Los Angeles"
+            district:
+              type: string
+              minLength: 2
+              maxLength: 32
+              description: City district
+              example: "Beverlywood"
+            address:
+              type: string
+              minLength: 2
+              maxLength: 32
+              description: Billing address line
+              example: "Moor Building"
+            house_number:
+              type: string
+              minLength: 1
+              maxLength: 9
+              description: House number
+              example: "17/2"
+            zip:
+              type: string
+              minLength: 2
+              maxLength: 10
+              description: Billing zip/postal code
+              example: "123456"
+            phone:
+              type: string
+              minLength: 1
+              maxLength: 32
+              pattern: "^[0-9+()\\- ]+$"
+              description: Phone number
+              example: "347771112233"
+        parameters:
+          type: object
+          description: Payment method parameters (dynamic keys)
+          additionalProperties:
+            type: object
+            description: Key-value pairs of payment method parameters
+            additionalProperties:
+              type: string
+              description: Parameter value as string
+          example:
+            card:
+              param1: "val-1"
+              param2: "val-2"
+            method1:
+              param1: "val-3"
+              param2: "val-4"

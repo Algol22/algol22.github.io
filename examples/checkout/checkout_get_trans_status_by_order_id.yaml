@@ -1,0 +1,223 @@
+openapi: 3.0.3
+info:
+  title: Payment Status API by Order ID
+  version: 1.0.0
+  description: >
+    Retrieve the status of the most recent transaction in an order's transaction subsequence using order_id.
+    It is recommended to send a unique order number to better identify payments, especially with cascading enabled.
+
+# servers:
+#   - url: https://{CHECKOUT_HOST}
+#     description: Payment Platform API server
+#     variables:
+#       CHECKOUT_HOST:
+#         default: api.paymentplatform.com
+#         description: Hostname for the Payment Platform API
+
+paths:
+  /api/v1/payment/status:
+    post:
+      summary: Get Transaction Status by order_id
+      operationId: get_trans_status_by_order_id
+      description: Retrieve the most recent transaction status by order ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatusByOrderRequest'
+            example:
+              merchant_key: xxxxx-xxxxx-xxxxx
+              order_id: 63c781cc-de3d-11eb-a1f1-0242ac130006
+              hash: "E6F1FBC89B5A214C05D1EF34C3A8DB4D0F8A1E1C"
+      responses:
+        '200':
+          description: Payment status details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+              examples:
+                settled:
+                  summary: Status Settled example
+                  value:
+                    payment_id: "24f7401c-fc47-11ec-8d07-0242ac120015"
+                    date: "2022-07-05 09:45:03"
+                    status: "settled"
+                    recurring_token: "e5f60b35485e"
+                    shedule_id: "57fddecf-17b9-4d38-9320-a670f0c29ec0"
+                    digital_wallet: "googlepay"
+                    order:
+                      number: "f0a51dfa-fc43-11ec-8128-0242ac120004-1"
+                      amount: "3.01"
+                      currency: "USD"
+                      description: "bloodline"
+                    customer:
+                      name: "John Doe"
+                      email: "success@gmail.com"
+                decline:
+                  summary: Status Decline example
+                  value:
+                    payment_id: "03e46e96-de42-11eb-aea7-0242ac140002"
+                    date: "2021-07-06 10:07:47"
+                    status: "decline"
+                    reason: "Declined by processing"
+                    digital_wallet: "googlepay"
+                    order:
+                      number: "order-1234"
+                      amount: "0.19"
+                      currency: "USD"
+                      description: "Important gift"
+                    customer:
+                      name: "John Doe"
+                      email: "test@mail.com"
+        '400':
+          description: Bad request - missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid merchant key or hash
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    StatusByOrderRequest:
+      type: object
+      required:
+        - merchant_key
+        - order_id
+        - hash
+      properties:
+        merchant_key:
+          type: string
+          description: Key for Merchant identification
+          example: xxxxx-xxxxx-xxxxx
+        order_id:
+          type: string
+          maxLength: 255
+          description: Merchant’s Order Number
+          example: dc66cdd8-d702-11ea-9a2f-0242c0a87002
+        hash:
+          type: string
+          description: >
+            Signature to validate request.
+            SHA1 of MD5 encoded string (uppercased): order_id + merchant_pass
+          example: "E6F1FBC89B5A214C05D1EF34C3A8DB4D0F8A1E1C"
+
+    StatusResponse:
+      type: object
+      required:
+        - payment_id
+        - date
+        - status
+        - order
+        - customer
+      properties:
+        payment_id:
+          type: string
+          maxLength: 255
+          description: Transaction ID in Payment Platform
+          example: dc66cdd8-d702-11ea-9a2f-0242c0a87002
+        date:
+          type: string
+          description: Transaction date (YYYY-MM-DD hh:mm:ss)
+          example: "2020-08-05 07:41:10"
+        status:
+          type: string
+          maxLength: 20
+          description: Payment status
+          enum:
+            - prepare
+            - settled
+            - pending
+            - 3ds
+            - redirect
+            - decline
+            - refund
+            - reversal
+            - void
+            - chargeback
+          example: settled
+        reason:
+          type: string
+          maxLength: 1024
+          description: Decline reason, only if transaction unsuccessful
+          example: The operation was rejected. Please contact the site support
+        recurring_token:
+          type: string
+          description: Recurring token if initialized
+          example: e5f60b35485e
+        shedule_id:
+          type: string
+          description: Schedule ID for recurring payments (purchase operation only)
+          example: 57fddecf-17b9-4d38-9320-a670f0c29ec0
+        digital_wallet:
+          type: string
+          description: Wallet provider, if digital wallet used
+          enum:
+            - googlepay
+            - applepay
+          example: googlepay
+        order:
+          type: object
+          required:
+            - number
+            - amount
+            - currency
+            - description
+          properties:
+            number:
+              type: string
+              maxLength: 255
+              description: Merchant’s Order ID
+              example: order-1234
+            amount:
+              type: string
+              pattern: "^[0-9]+(\\.[0-9]{1,2})?$"
+              description: Product price (currency defined by first payment)
+              example: "0.19"
+            currency:
+              type: string
+              maxLength: 3
+              description: Currency code
+              example: USD
+            description:
+              type: string
+              maxLength: 1024
+              description: Product name or additional info
+              example: Very important gift
+        customer:
+          type: object
+          required:
+            - name
+            - email
+          properties:
+            name:
+              type: string
+              description: Customer's name
+              example: John Doe
+            email:
+              type: string
+              format: email
+              description: Customer's email address
+              example: example@mail.com
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: invalid_request
+        message:
+          type: string
+          description: Human-readable error message
+          example: Missing required parameter 'order_id'.

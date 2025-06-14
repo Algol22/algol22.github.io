@@ -1,0 +1,38 @@
+---
+id: payment-platform-retry-api
+title: "Payment Platform RETRY API"
+description: "RETRY request is used to retry funds charging for secondary recurring payments in case of soft decline."
+sidebar_label: Introduction
+sidebar_position: 0
+hide_title: true
+custom_edit_url: null
+---
+
+import ApiLogo from "@theme/ApiLogo";
+import Heading from "@theme/Heading";
+import SchemaTabs from "@theme/SchemaTabs";
+import TabItem from "@theme/TabItem";
+import Export from "@theme/ApiExplorer/Export";
+
+<span
+  className={"theme-doc-version-badge badge badge--secondary"}
+  children={"Version: 1.0.0"}
+>
+</span>
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Payment Platform RETRY API"}
+>
+</Heading>
+
+
+
+RETRY request is used to retry funds charging for secondary recurring payments in case of soft decline.
+This action creates a RETRY transaction and can cause payment final status change.
+This request is sent by POST in the background (e.g. through PHP CURL).
+
+
+
+      

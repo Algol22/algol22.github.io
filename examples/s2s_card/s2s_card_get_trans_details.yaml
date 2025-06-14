@@ -1,0 +1,167 @@
+openapi: 3.0.3
+info:
+  title: Payment Platform API
+  version: 1.0.0
+  description: API to get transaction details history by order.
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Get Transaction Details
+      operationId: get_trans_details
+      description: |
+        This request is sent by POST in the background to retrieve transaction history.
+        For additional info on cascading, see GET_TRANS_STATUS request section.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - action
+                - client_key
+                - trans_id
+                - hash
+              properties:
+                action:
+                  type: string
+                  enum: [GET_TRANS_DETAILS]
+                  description: Request action type
+                  example: GET_TRANS_DETAILS
+                client_key:
+                  type: string
+                  format: uuid
+                  description: Unique client key (UUID format)
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                trans_id:
+                  type: string
+                  format: uuid
+                  description: Transaction ID in the Payment Platform (UUID format)
+                  example: "66624eba-9e10-11ec-aa41-0242ac130002"
+                hash:
+                  type: string
+                  description: Special signature to validate your request to Payment Platform.
+                # You could optionally specify further details about the hash based on the formula used.
+      responses:
+        '200':
+          description: Successful response with transaction details
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - action
+                  - result
+                  - status
+                  - order_id
+                  - trans_id
+                  - name
+                  - mail
+                  - ip
+                  - amount
+                  - currency
+                  - card
+                  - transactions
+                properties:
+                  action:
+                    type: string
+                    example: GET_TRANS_DETAILS
+                  result:
+                    type: string
+                    example: SUCCESS
+                  status:
+                    type: string
+                    description: Transaction status
+                    enum:
+                      - 3DS
+                      - REDIRECT
+                      - PENDING
+                      - PREPARE
+                      - DECLINED
+                      - SETTLED
+                      - REVERSAL
+                      - REFUND
+                      - VOID
+                      - CHARGEBACK
+                  order_id:
+                    type: string
+                    description: Transaction ID in the Merchant's system
+                    example: "1646655381neural"
+                  trans_id:
+                    type: string
+                    format: uuid
+                    description: Transaction ID in the Payment Platform
+                    example: "66624eba-9e10-11ec-aa41-0242ac130002"
+                  name:
+                    type: string
+                    description: Payer name
+                    example: "John Rikher"
+                  mail:
+                    type: string
+                    format: email
+                    description: Payer email
+                    example: "test@gmail.com"
+                  ip:
+                    type: string
+                    description: Payer IP address
+                    example: "192.169.217.106"
+                  amount:
+                    type: string
+                    description: Order amount
+                    example: "0.02"
+                  currency:
+                    type: string
+                    description: Currency
+                    example: "USD"
+                  digital_wallet:
+                    type: string
+                    description: Wallet provider (if used)
+                    example: "googlepay"
+                  card:
+                    type: string
+                    description: Card number masked (or decrypted wallet token)
+                    example: "522864******0691"
+                  pan_type:
+                    type: string
+                    description: Digital payment card type (DPAN or FPAN)
+                    example: "dpan"
+                  decline_reason:
+                    type: string
+                    description: Reason of transaction decline (if status is DECLINED)
+                  recurring_token:
+                    type: string
+                    description: Token for recurring payments (if applicable)
+                  schedule_id:
+                    type: string
+                    description: Schedule ID for recurring payments
+                  transactions:
+                    type: array
+                    description: Array of transactions related to this order
+                    items:
+                      type: object
+                      required:
+                        - date
+                        - type
+                        - status
+                        - amount
+                      properties:
+                        date:
+                          type: string
+                          format: date-time
+                          example: "2022-03-07T12:16:23Z"
+                        type:
+                          type: string
+                          description: Transaction type
+                          enum: [sale, 3ds, auth, capture, credit, chargeback, reversal, refund]
+                          example: "3DS"
+                        status:
+                          type: string
+                          description: Transaction status
+                          enum: [success, waiting, fail]
+                          example: "success"
+                        amount:
+                          type: string
+                          example: "0.02"

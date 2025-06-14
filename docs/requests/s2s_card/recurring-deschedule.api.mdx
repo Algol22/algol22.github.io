@@ -1,0 +1,71 @@
+---
+id: recurring-deschedule
+title: "Deschedule Recurring"
+description: "Deschedule Recurring"
+sidebar_label: "Deschedule Recurring"
+hide_title: true
+hide_table_of_contents: true
+api: eJyVVd1P4koU/1dOztNu0iIgIvTNi27WZJNLRJ6QmKFztLPbztT5UAjp/745LWJxxXuXlzKd+X2cr+kWvXh0mCxw1p/BRFiJywhNSVZ4ZfS1xAQtpcFapR/vJbk0IxlywggtPQVy/h8jN5hs66WyJDHxNlCEqdGetOctUZa5SmvCk3X88vISPxhbxMHmpFMjGbNFZi4E//ObkjBBs/pJqd8JNcwLFCmzYIRprkj7+1+0qU+8OvTmF/H2q897JTHCTLiM4yotR+YVudpWw/Wm6DxzYISkQ8Fql1ezyfery/mPK0Zz9FaVDQi/qTVJeBZ5ILhrnbxDJliLosyZs0VRHbj+QJazIjwmGEJt+1BwrtVTIGgoQEnSXj0osgdyvf4pDc6G5zGNxqu415ensRicDeNBfzjsDXrng263y0beZ+yv3dwyDMzKC6VJggyMAp8RlFYVwm7AW6Hdvl5vFsfj8ecWR6MRW2yX8K/tzXZguL4EpWtfU7EpOHPTXHgGH5g67fc+NzUej9lU3UkfuDlUv2lGA5x61MIHS/DFEcFFWZKWag0XEXwztgi5gMHXAx/Mv0eJVSrpoTsenQ/PBqf9Hlb1j6vnSqNd08b9bpcfhw4u95MKuzkFkaZUeuJcHZnNn64Zh+Oj+L8H6Ej/W3Ih958jZvPJ5Go22wVbvc9tK7Kb1ybGCAvymeHbqjSudip8hgme7JZKP5haVvla5H0zQAwt4ovpNUb4TNY1mr1Ot9P9cwQy5fgoKAfBkQRvwHlTwn64oGxkHKw2sL88eUO0DjnyoezAbfZWK+WgEJLgWQmY/ju7hS/UeexEEBwDpt+nMJnf/PjaudOcVY6xEHUhtCjoeJIO/O9r4GntT8pcqJos2Jz3mvwtmnQuI8z4mSxwu10JR3ObVxW/fgpkN5gslhE+C6vEirO7WPKkkJBkMVlssb7ucNI0XXzLqnw8D6z+3x+HKnqluKhb+Ai47t5q2WoFzhxGuNp9oQojGdNijtoLtl1VvwHCy1+Z
+sidebar_class_name: "post api-method"
+info_path: docs/requests/s2s_card/payment-platform-deschedule-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Deschedule Recurring"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/post"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Deschedule Recurring
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"required":true,"content":{"application/x-www-form-urlencoded":{"schema":{"type":"object","required":["action","client_key","recurring_token","schedule_id","hash"],"properties":{"action":{"type":"string","enum":["DESCHEDULE"],"description":"Fixed value \"DESCHEDULE\"","example":"DESCHEDULE"},"client_key":{"type":"string","format":"uuid","description":"Unique client identifier","example":"123e4567-e89b-12d3-a456-426614174000"},"recurring_token":{"type":"string","format":"uuid","description":"Token obtained during the primary transaction","example":"999e4567-e89b-12d3-a456-426614174888"},"schedule_id":{"type":"string","format":"uuid","description":"Schedule ID in the Payment Platform","example":"321e4567-e89b-12d3-a456-426614174999"},"hash":{"type":"string","description":"Request signature (see Appendix A, Formula 4)","example":"hashsignatureabcdef0987654321"}}}}}}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Deschedule request accepted","content":{"application/json":{"schema":{"type":"object","properties":{"action":{"type":"string","example":"DESCHEDULE"},"result":{"type":"string","example":"SUCCESS"}}}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

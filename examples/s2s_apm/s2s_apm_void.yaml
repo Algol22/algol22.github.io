@@ -1,0 +1,231 @@
+openapi: 3.0.3
+info:
+  title: VOID API
+  version: 1.0.0
+  description: >
+    The VOID request is used to cancel a SALE transaction on the same financial day,
+    only if the transaction is in SETTLED status.
+
+# servers:
+#   - url: https://{PAYMENT_API_HOST}
+#     description: Payment Platform API server
+#     variables:
+#       PAYMENT_API_HOST:
+#         default: api.paymentplatform.com
+
+paths:
+  /api/v1/payment/void:
+    post:
+      summary: Void
+      operationId: void
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VoidRequest'
+            example:
+              action: VOID
+              client_key: CLIENT123KEY
+              trans_id: abcdef12-3456-7890-abcd-ef1234567890
+              hash: 9f8e7d6c5b4a3210fedcba0987654321
+      responses:
+        '200':
+          description: Response from VOID operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/VoidSuccessResponse'
+                  - $ref: '#/components/schemas/VoidDeclinedResponse'
+                  - $ref: '#/components/schemas/VoidUndefinedResponse'
+
+components:
+  schemas:
+    VoidRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - trans_id
+        - hash
+      properties:
+        action:
+          type: string
+          enum: [VOID]
+          description: Action type (must be "VOID")
+          example: VOID
+        client_key:
+          type: string
+          description: Unique client key
+          example: CLIENT123KEY
+        trans_id:
+          type: string
+          maxLength: 255
+          description: Transaction ID in the Payment Platform
+          example: abcdef12-3456-7890-abcd-ef1234567890
+        hash:
+          type: string
+          description: Signature for request validation
+          example: 9f8e7d6c5b4a3210fedcba0987654321
+
+    VoidSuccessResponse:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+      properties:
+        action:
+          type: string
+          example: VOID
+        result:
+          type: string
+          example: SUCCESS
+        status:
+          type: string
+          example: VOID
+        order_id:
+          type: string
+          example: ORD123456
+        trans_id:
+          type: string
+          example: abcdef12-3456-7890-abcd-ef1234567890
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-09T12:34:56Z
+
+    VoidDeclinedResponse:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - decline_reason
+      properties:
+        action:
+          type: string
+          example: VOID
+        result:
+          type: string
+          example: DECLINED
+        status:
+          type: string
+          example: SETTLED
+        order_id:
+          type: string
+          example: ORD123456
+        trans_id:
+          type: string
+          example: abcdef12-3456-7890-abcd-ef1234567890
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-09T12:34:56Z
+        decline_reason:
+          type: string
+          example: "Transaction cannot be voided after business day"
+
+    VoidUndefinedResponse:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+      properties:
+        action:
+          type: string
+          example: VOID
+        result:
+          type: string
+          example: UNDEFINED
+        status:
+          type: string
+          example: SETTLED
+        order_id:
+          type: string
+          example: ORD123456
+        trans_id:
+          type: string
+          example: abcdef12-3456-7890-abcd-ef1234567890
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-09T12:34:56Z
+
+    VoidCallback:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - hash
+      properties:
+        action:
+          type: string
+          example: VOID
+        result:
+          type: string
+          enum: [SUCCESS, DECLINED, UNDEFINED]
+          example: SUCCESS
+        status:
+          type: string
+          enum: [SETTLED]
+          example: SETTLED
+        order_id:
+          type: string
+          example: ORD123456
+        trans_id:
+          type: string
+          example: abcdef12-3456-7890-abcd-ef1234567890
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-09T12:34:56Z
+        decline_reason:
+          type: string
+          example: "N/A"
+        connector_name:
+          type: string
+          example: "ConnectorX"
+        rrn:
+          type: string
+          example: "123456789012"
+        approval_code:
+          type: string
+          example: "APPROVED123"
+        gateway_id:
+          type: string
+          example: "GW12345"
+        extra_gateway_id:
+          type: string
+          example: "EXTRA6789"
+        merchant_name:
+          type: string
+          example: "Merchant Inc."
+        mid_name:
+          type: string
+          example: "MID98765"
+        issuer_country:
+          type: string
+          example: "US"
+        issuer_bank:
+          type: string
+          example: "Bank of America"
+        hash:
+          type: string
+          description: Signature used to validate callback
+          example: "callbacksecurehash123"

@@ -1,0 +1,165 @@
+openapi: 3.0.3
+info:
+  title: Payment Platform RETRY API
+  version: 1.0.0
+  description: |
+    RETRY request is used to retry funds charging for secondary recurring payments in case of soft decline.
+    This action creates a RETRY transaction and can cause payment final status change.
+    This request is sent by POST in the background (e.g. through PHP CURL).
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Retry (secondary recurring)
+      operationId: retry
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - action
+                - client_key
+                - trans_id
+                - hash
+              properties:
+                action:
+                  type: string
+                  enum: [RETRY]
+                  description: Must be "RETRY"
+                  example: RETRY
+                client_key:
+                  type: string
+                  format: uuid
+                  description: Unique client key
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                trans_id:
+                  type: string
+                  format: uuid
+                  description: Transaction ID of the softly declined recurring transaction to retry
+                  example: "123e4567-e89b-12d3-a456-426614174001"
+                hash:
+                  type: string
+                  description: Signature to validate your request to Payment Platform (see Appendix A, Formula 1)
+                  example: "abcdef1234567890"
+
+      responses:
+        '200':
+          description: Synchronous response to retry request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    enum: [RETRY]
+                    example: RETRY
+                  result:
+                    type: string
+                    enum: [ACCEPTED]
+                    example: ACCEPTED
+                  order_id:
+                    type: string
+                    description: Transaction ID in the Merchant's system
+                    example: "ORD-789456123"
+                  trans_id:
+                    type: string
+                    format: uuid
+                    description: Transaction ID in the Payment Platform
+                    example: "123e4567-e89b-12d3-a456-426614174001"
+
+components:
+  callbacks:
+    retryCallbackSuccess:
+      '{$request.body#/callbackUrl}':
+        post:
+          summary: Successful RETRY callback
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    action:
+                      type: string
+                      enum: [RETRY]
+                      example: RETRY
+                    result:
+                      type: string
+                      enum: [SUCCESS]
+                      example: SUCCESS
+                    status:
+                      type: string
+                      enum: [SETTLED]
+                      example: SETTLED
+                    order_id:
+                      type: string
+                      description: Transaction ID in the Merchant's system
+                      example: "ORD-789456123"
+                    trans_id:
+                      type: string
+                      format: uuid
+                      example: "123e4567-e89b-12d3-a456-426614174001"
+                    amount:
+                      type: number
+                      format: float
+                      example: 100.00
+                    currency:
+                      type: string
+                      example: "USD"
+                    hash:
+                      type: string
+                      description: Signature to validate callback (see Appendix A, Formula 2)
+                      example: "abcdef1234567890"
+
+    retryCallbackDeclined:
+      '{$request.body#/callbackUrl}':
+        post:
+          summary: Unsuccessful RETRY callback
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    action:
+                      type: string
+                      enum: [RETRY]
+                      example: RETRY
+                    result:
+                      type: string
+                      enum: [DECLINED]
+                      example: DECLINED
+                    status:
+                      type: string
+                      enum: [DECLINED]
+                      example: DECLINED
+                    order_id:
+                      type: string
+                      description: Transaction ID in the Merchant's system
+                      example: "ORD-789456123"
+                    trans_id:
+                      type: string
+                      format: uuid
+                      example: "123e4567-e89b-12d3-a456-426614174001"
+                    amount:
+                      type: number
+                      format: float
+                      example: 100.00
+                    currency:
+                      type: string
+                      example: "USD"
+                    decline_reason:
+                      type: string
+                      description: Description of the cancellation reason
+                      example: "Insufficient funds"
+                    hash:
+                      type: string
+                      description: Signature to validate callback (see Appendix A, Formula 2)
+                      example: "abcdef1234567890"

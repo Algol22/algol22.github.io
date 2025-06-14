@@ -1,0 +1,44 @@
+---
+id: payment-platform-api-get-trans-status
+title: "Payment Platform API - GET_TRANS_STATUS"
+description: "Retrieves the status of a transaction from the Payment Platform."
+sidebar_label: Introduction
+sidebar_position: 0
+hide_title: true
+custom_edit_url: null
+---
+
+import ApiLogo from "@theme/ApiLogo";
+import Heading from "@theme/Heading";
+import SchemaTabs from "@theme/SchemaTabs";
+import TabItem from "@theme/TabItem";
+import Export from "@theme/ApiExplorer/Export";
+
+<span
+  className={"theme-doc-version-badge badge badge--secondary"}
+  children={"Version: 1.0.0"}
+>
+</span>
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Payment Platform API - GET_TRANS_STATUS"}
+>
+</Heading>
+
+
+
+Retrieves the status of a transaction from the Payment Platform.
+This request must be sent via HTTP POST (e.g., PHP cURL).
+
+⚠️ Notes:
+- When using cascading payments, a unique order_id is required per payment.
+- GET_TRANS_STATUS with trans_id returns the status of a specific payment in the cascade.
+- For the final status, rely on callbacks and enable 'Cascading Context for Get Status' in configuration.
+
+Statuses returned: 3DS, REDIRECT, PENDING, PREPARE, DECLINED, SETTLED, REVERSAL, REFUND, VOID, CHARGEBACK.
+
+
+
+      

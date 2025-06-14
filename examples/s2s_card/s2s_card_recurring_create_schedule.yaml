@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  title: Payment Platform - RETRY Transaction API
+  version: 1.0.0
+  description: >
+    This API is used to retry funds charging for secondary recurring payments in case of soft decline.
+    The request is sent as a POST and can change the payment's final status.
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Create Recurring Schedule
+      operationId: recurring_create_schedule
+      description: |
+        This action creates a RETRY transaction and may update the payment status.
+        It is typically used for secondary recurring payments after a soft decline.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - action
+                - client_key
+                - trans_id
+                - hash
+              properties:
+                action:
+                  type: string
+                  enum: [RETRY]
+                  example: RETRY
+                  description: Fixed value "RETRY"
+                client_key:
+                  type: string
+                  format: uuid
+                  description: Unique client identifier
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                trans_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the recurring transaction to retry
+                  example: "223e4567-e89b-12d3-a456-426614174999"
+                hash:
+                  type: string
+                  description: Request validation signature (see Appendix A, Formula 1)
+                  example: "abcdef1234567890"
+      responses:
+        '200':
+          description: Synchronous response from payment platform
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    example: RETRY
+                  result:
+                    type: string
+                    example: ACCEPTED
+                  order_id:
+                    type: string
+                    example: "ORD-001122"
+                    description: Order ID in the merchant's system
+                  trans_id:
+                    type: string
+                    format: uuid
+                    example: "223e4567-e89b-12d3-a456-426614174999"
+
+components:
+  schemas:
+    RetrySuccessCallback:
+      type: object
+      properties:
+        action:
+          type: string
+          example: RETRY
+        result:
+          type: string
+          example: SUCCESS
+        status:
+          type: string
+          example: SETTLED
+        order_id:
+          type: string
+          example: "ORD-001122"
+        trans_id:
+          type: string
+          format: uuid
+          example: "223e4567-e89b-12d3-a456-426614174999"
+        amount:
+          type: number
+          format: float
+          example: 49.99
+        currency:
+          type: string
+          example: "USD"
+        hash:
+          type: string
+          example: "responsehash987654321"
+          description: Signature to validate callback (see Appendix A, Formula 2)
+
+    RetryFailureCallback:
+      type: object
+      properties:
+        action:
+          type: string
+          example: RETRY
+        result:
+          type: string
+          example: DECLINED
+        status:
+          type: string
+          example: DECLINED
+        order_id:
+          type: string
+          example: "ORD-001122"
+        trans_id:
+          type: string
+          format: uuid
+          example: "223e4567-e89b-12d3-a456-426614174999"
+        amount:
+          type: number
+          format: float
+          example: 49.99
+        currency:
+          type: string
+          example: "USD"
+        decline_reason:
+          type: string
+          example: "Insufficient funds"
+        hash:
+          type: string
+          example: "responsehash987654321"
+          description: Signature to validate callback (see Appendix A, Formula 2)

@@ -1,0 +1,566 @@
+openapi: 3.0.3
+info:
+  title: Payment Platform DEBIT API
+  version: 1.0.0
+  description: |
+    Use DEBIT action to create a debit transaction as a part of transfer flow.
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Debit
+      operationId: debit
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DebitRequest'
+            examples:
+              debitRequestExample:
+                summary: Sample DEBIT request
+                value:
+                  action: DEBIT
+                  client_key: 123e4567-e89b-12d3-a456-426614174000
+                  order_id: ORDER-20250608-0001
+                  order_amount: 100.00
+                  order_currency: USD
+                  order_description: "Purchase of product XYZ"
+                  term_url_3ds: "https://merchant.example.com/3ds-return"
+                  card_number: "4111111111111111"
+                  card_exp_month: "12"
+                  card_exp_year: "2026"
+                  card_cvv2: "123"
+                  payer_first_name: John
+                  payer_last_name: Doe
+                  payer_middle_name: M
+                  payer_birth_date: "1980-01-01"
+                  payer_address: "123 Main St"
+                  payer_address2: "Suite 101"
+                  payer_country: US
+                  payer_state: CA
+                  payer_city: San Francisco
+                  payer_zip: "94105"
+                  payer_email: john.doe@example.com
+                  payer_phone: "+14155551234"
+                  payer_ip: "192.168.1.100"
+                  parameters:
+                    param1: value1
+                    param2: value2
+                  hash: "abcdef1234567890abcdef1234567890abcdef12"
+      responses:
+        '200':
+          description: DEBIT transaction response
+          content:
+            application/json:
+              oneOf:
+                - $ref: '#/components/schemas/DebitResponseSuccess'
+                - $ref: '#/components/schemas/DebitResponseDeclined'
+                - $ref: '#/components/schemas/DebitResponseRedirect'
+                - $ref: '#/components/schemas/DebitResponseUndefined'
+              examples:
+                success:
+                  summary: Successful DEBIT response
+                  value:
+                    action: DEBIT
+                    result: SUCCESS
+                    status: SETTLED
+                    order_id: ORDER-20250608-0001
+                    trans_id: abc123def456
+                    trans_date: 2025-06-08T12:00:00Z
+                    descriptor: "Merchant descriptor"
+                    amount: 100.00
+                    currency: USD
+                declined:
+                  summary: Declined DEBIT response
+                  value:
+                    action: DEBIT
+                    result: DECLINED
+                    status: DECLINED
+                    order_id: ORDER-20250608-0001
+                    trans_id: abc123def456
+                    trans_date: 2025-06-08T12:00:00Z
+                    descriptor: "Merchant descriptor"
+                    amount: 100.00
+                    currency: USD
+                    decline_reason: "Insufficient funds"
+                redirect:
+                  summary: 3D-Secure redirect response
+                  value:
+                    action: DEBIT
+                    result: REDIRECT
+                    status: 3DS
+                    order_id: ORDER-20250608-0001
+                    trans_id: abc123def456
+                    trans_date: 2025-06-08T12:00:00Z
+                    descriptor: "Merchant descriptor"
+                    amount: 100.00
+                    currency: USD
+                    redirect_url: "https://acs.examplebank.com/3ds"
+                    redirect_params:
+                      PaReq: "examplePaReqValue"
+                      MD: "exampleMDValue"
+                    redirect_method: POST
+                undefined:
+                  summary: Undefined DEBIT response
+                  value:
+                    action: DEBIT
+                    result: UNDEFINED
+                    status: PREPARE
+                    order_id: ORDER-20250608-0001
+                    trans_id: abc123def456
+                    trans_date: 2025-06-08T12:00:00Z
+                    descriptor: "Merchant descriptor"
+                    amount: 100.00
+                    currency: USD
+
+components:
+  schemas:
+
+    DebitRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - order_id
+        - order_amount
+        - order_currency
+        - order_description
+        - term_url_3ds
+        - card_number
+        - card_exp_month
+        - card_exp_year
+        - card_cvv2
+        - payer_ip
+        - hash
+      properties:
+        action:
+          type: string
+          enum:
+            - DEBIT
+          description: Fixed value "DEBIT"
+          example: DEBIT
+        client_key:
+          type: string
+          format: uuid
+          description: Unique client key
+          example: 123e4567-e89b-12d3-a456-426614174000
+        order_id:
+          type: string
+          maxLength: 255
+          description: Transaction ID in the Merchant’s system
+          example: ORDER-20250608-0001
+        order_amount:
+          type: number
+          format: float
+          description: Amount of the transaction in format XXXX.XX
+          example: 100.00
+        order_currency:
+          type: string
+          description: Currency code
+          example: USD
+        order_description:
+          type: string
+          maxLength: 1024
+          description: Description of the transaction
+          example: "Purchase of product XYZ"
+        term_url_3ds:
+          type: string
+          format: uri
+          description: URL to return after 3D-Secure
+          example: "https://merchant.example.com/3ds-return"
+        card_number:
+          type: string
+          description: Credit Card Number
+          example: "4111111111111111"
+        card_exp_month:
+          type: string
+          pattern: "^(0[1-9]|1[0-2])$"
+          description: Expiry month (MM)
+          example: "12"
+        card_exp_year:
+          type: string
+          pattern: "^[0-9]{4}$"
+          description: Expiry year (YYYY)
+          example: "2026"
+        card_cvv2:
+          type: string
+          minLength: 3
+          maxLength: 4
+          description: CVV/CVC2 code
+          example: "123"
+        payer_first_name:
+          type: string
+          maxLength: 32
+          description: Customer’s first name
+          nullable: true
+          example: John
+        payer_last_name:
+          type: string
+          maxLength: 32
+          description: Customer’s last name
+          nullable: true
+          example: Doe
+        payer_middle_name:
+          type: string
+          maxLength: 32
+          description: Customer’s middle name
+          nullable: true
+          example: M
+        payer_birth_date:
+          type: string
+          format: date
+          description: Customer’s birthday (yyyy-MM-dd)
+          nullable: true
+          example: "1980-01-01"
+        payer_address:
+          type: string
+          maxLength: 255
+          description: Customer’s address
+          nullable: true
+          example: "123 Main St"
+        payer_address2:
+          type: string
+          maxLength: 255
+          description: Additional address info
+          nullable: true
+          example: "Suite 101"
+        payer_country:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: Customer’s country (2-letter code)
+          nullable: true
+          example: US
+        payer_state:
+          type: string
+          maxLength: 32
+          description: Customer’s state
+          nullable: true
+          example: CA
+        payer_city:
+          type: string
+          maxLength: 32
+          description: Customer’s city
+          nullable: true
+          example: San Francisco
+        payer_zip:
+          type: string
+          maxLength: 10
+          description: Customer’s ZIP code
+          nullable: true
+          example: "94105"
+        payer_email:
+          type: string
+          maxLength: 256
+          format: email
+          description: Customer’s email
+          nullable: true
+          example: john.doe@example.com
+        payer_phone:
+          type: string
+          maxLength: 32
+          description: Customer’s phone
+          nullable: true
+          example: "+14155551234"
+        payer_ip:
+          type: string
+          format: ipv4
+          description: Customer’s IP address
+          example: "192.168.1.100"
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Extra parameters required by acquirer
+          nullable: true
+          example:
+            param1: value1
+            param2: value2
+        hash:
+          type: string
+          description: Signature to validate request
+          example: "abcdef1234567890abcdef1234567890abcdef12"
+
+    DebitResponseSuccess:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - descriptor
+        - amount
+        - currency
+      properties:
+        action:
+          type: string
+          enum:
+            - DEBIT
+          example: DEBIT
+        result:
+          type: string
+          enum:
+            - SUCCESS
+          example: SUCCESS
+        status:
+          type: string
+          enum:
+            - 3DS
+            - REDIRECT
+            - SETTLED
+          example: SETTLED
+        order_id:
+          type: string
+          example: ORDER-20250608-0001
+        trans_id:
+          type: string
+          example: abc123def456
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T12:00:00Z
+        descriptor:
+          type: string
+          description: Descriptor shown in payer’s bank statement
+          example: "Merchant descriptor"
+        amount:
+          type: number
+          format: float
+          example: 100.00
+        currency:
+          type: string
+          example: USD
+        connector_name:
+          type: string
+          nullable: true
+          example: "ExampleGateway"
+        rrn:
+          type: string
+          nullable: true
+          example: "123456789012"
+        approval_code:
+          type: string
+          nullable: true
+          example: "APPR1234"
+        gateway_id:
+          type: string
+          nullable: true
+          example: "GW-987654321"
+        extra_gateway_id:
+          type: string
+          nullable: true
+          example: "GW-EXTRA-001"
+        merchant_name:
+          type: string
+          nullable: true
+          example: "Example Merchant"
+        mid_name:
+          type: string
+          nullable: true
+          example: "MID-12345"
+        issuer_country:
+          type: string
+          nullable: true
+          example: "US"
+        issuer_bank:
+          type: string
+          nullable: true
+          example: "Bank of Examples"
+        hash:
+          type: string
+          description: Signature to validate callback
+          example: "abcdef1234567890abcdef1234567890abcdef12"
+
+    DebitResponseDeclined:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - descriptor
+        - amount
+        - currency
+        - decline_reason
+        - hash
+      properties:
+        action:
+          type: string
+          enum:
+            - DEBIT
+          example: DEBIT
+        result:
+          type: string
+          enum:
+            - DECLINED
+          example: DECLINED
+        status:
+          type: string
+          enum:
+            - DECLINED
+          example: DECLINED
+        order_id:
+          type: string
+          example: ORDER-20250608-0001
+        trans_id:
+          type: string
+          example: abc123def456
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T12:00:00Z
+        descriptor:
+          type: string
+          example: "Merchant descriptor"
+        amount:
+          type: number
+          format: float
+          example: 100.00
+        currency:
+          type: string
+          example: USD
+        decline_reason:
+          type: string
+          example: "Insufficient funds"
+        hash:
+          type: string
+          description: Signature to validate callback
+          example: "abcdef1234567890abcdef1234567890abcdef12"
+
+    DebitResponseRedirect:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - descriptor
+        - amount
+        - currency
+        - redirect_url
+        - redirect_method
+      properties:
+        action:
+          type: string
+          enum:
+            - DEBIT
+          example: DEBIT
+        result:
+          type: string
+          enum:
+            - REDIRECT
+          example: REDIRECT
+        status:
+          type: string
+          enum:
+            - 3DS
+            - REDIRECT
+          example: 3DS
+        order_id:
+          type: string
+          example: ORDER-20250608-0001
+        trans_id:
+          type: string
+          example: abc123def456
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T12:00:00Z
+        descriptor:
+          type: string
+          example: "Merchant descriptor"
+        amount:
+          type: number
+          format: float
+          example: 100.00
+        currency:
+          type: string
+          example: USD
+        redirect_url:
+          type: string
+          format: uri
+          example: "https://acs.examplebank.com/3ds"
+        redirect_params:
+          oneOf:
+            - type: object
+              additionalProperties:
+                type: string
+              example:
+                PaReq: "examplePaReqValue"
+                MD: "exampleMDValue"
+            - type: array
+              items: {}
+              example: []
+          nullable: true
+          description: >
+            Object of specific 3DS parameters or empty array. May be missing.
+        redirect_method:
+          type: string
+          enum:
+            - POST
+            - GET
+          example: POST
+
+    DebitResponseUndefined:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - descriptor
+        - amount
+        - currency
+      properties:
+        action:
+          type: string
+          enum:
+            - DEBIT
+          example: DEBIT
+        result:
+          type: string
+          enum:
+            - UNDEFINED
+          example: UNDEFINED
+        status:
+          type: string
+          enum:
+            - 3DS
+            - REDIRECT
+            - PREPARE
+          example: PREPARE
+        order_id:
+          type: string
+          example: ORDER-20250608-0001
+        trans_id:
+          type: string
+          example: abc123def456
+        trans_date:
+          type: string
+          format: date-time
+          example: 2025-06-08T12:00:00Z
+        descriptor:
+          type: string
+          example: "Merchant descriptor"
+        amount:
+          type: number
+          format: float
+          example: 100.00
+        currency:
+          type: string
+          example: USD
+        hash:
+          type: string
+          description: Signature to validate callback
+          example: "abcdef1234567890abcdef1234567890abcdef12"

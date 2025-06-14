@@ -1,0 +1,172 @@
+openapi: 3.0.3
+info:
+  title: CREDITVOID API
+  version: 1.0.0
+  description: >
+    The CREDITVOID request is used to perform a refund for a previously processed SALE transaction
+    by referencing the transaction ID of the original transaction in the Payment Platform.
+
+# servers:
+#   - url: https://{PAYMENT_API_HOST}
+#     description: Payment Platform API server
+#     variables:
+#       PAYMENT_API_HOST:
+#         default: api.paymentplatform.com
+
+paths:
+  /api/v1/payment/creditvoid:
+    post:
+      summary: Creditvoid
+      operationId: creditvoid
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreditVoidRequest'
+            example:
+              action: CREDITVOID
+              client_key: CLIENT123KEY
+              trans_id: 9876abcd-ef12-4567-89ab-cdef12345678
+              amount: "100.00"
+              hash: abcd1234efgh5678ijkl9012mnop3456
+      responses:
+        '200':
+          description: Refund request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditVoidResponse'
+              example:
+                action: CREDITVOID
+                result: ACCEPTED
+                order_id: order-123
+                trans_id: 9876abcd-ef12-4567-89ab-cdef12345678
+
+components:
+  schemas:
+    CreditVoidRequest:
+      type: object
+      required:
+        - action
+        - trans_id
+        - hash
+      properties:
+        action:
+          type: string
+          enum: [CREDITVOID]
+          description: Operation type
+          example: CREDITVOID
+        client_key:
+          type: string
+          description: Unique client key
+          example: CLIENT123KEY
+        trans_id:
+          type: string
+          maxLength: 255
+          description: Transaction ID in the Payment Platform
+          example: 9876abcd-ef12-4567-89ab-cdef12345678
+        amount:
+          type: string
+          description: >
+            Refund amount (optional for full refunds).
+            Format depends on currency:
+            - Zero-exponent: Integer (e.g. "1000")
+            - 2-exponent: XX.XX (e.g. "100.00")
+            - 3-exponent: XXX.XXX (e.g. "100.999")
+            - 4-exponent: XXX.XXXX (e.g. "100.9999")
+          example: "100.00"
+        hash:
+          type: string
+          description: Signature for request validation
+          example: abcd1234efgh5678ijkl9012mnop3456
+
+    CreditVoidResponse:
+      type: object
+      required:
+        - action
+        - result
+        - order_id
+        - trans_id
+      properties:
+        action:
+          type: string
+          example: CREDITVOID
+        result:
+          type: string
+          example: ACCEPTED
+        order_id:
+          type: string
+          example: order-123
+        trans_id:
+          type: string
+          example: 9876abcd-ef12-4567-89ab-cdef12345678
+
+    CreditVoidCallback:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - hash
+      properties:
+        action:
+          type: string
+          example: CREDITVOID
+        result:
+          type: string
+          enum: [SUCCESS, DECLINED, UNDEFINED]
+          example: SUCCESS
+        status:
+          type: string
+          enum: [REFUND, SETTLED]
+          example: REFUND
+        order_id:
+          type: string
+          example: order-123
+        trans_id:
+          type: string
+          example: 9876abcd-ef12-4567-89ab-cdef12345678
+        creditvoid_date:
+          type: string
+          format: date-time
+          example: "2025-06-09 14:12:00"
+        amount:
+          type: string
+          example: "100.00"
+        decline_reason:
+          type: string
+          example: "Insufficient funds"
+        connector_name:
+          type: string
+          example: "ConnectorX"
+        rrn:
+          type: string
+          example: "123456789012"
+        approval_code:
+          type: string
+          example: "APPROVED123"
+        gateway_id:
+          type: string
+          example: "GW12345"
+        extra_gateway_id:
+          type: string
+          example: "EXTRA6789"
+        merchant_name:
+          type: string
+          example: "Merchant Inc."
+        mid_name:
+          type: string
+          example: "MID98765"
+        issuer_country:
+          type: string
+          example: "US"
+        issuer_bank:
+          type: string
+          example: "Bank of America"
+        hash:
+          type: string
+          description: Signature for callback validation
+          example: "callbacksecurehash123"

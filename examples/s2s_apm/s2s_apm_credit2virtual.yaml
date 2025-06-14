@@ -1,0 +1,202 @@
+openapi: 3.0.3
+info:
+  title: CREDIT2VIRTUAL API
+  version: 1.0.0
+  description: >
+    This API allows a merchant to send a CREDIT2VIRTUAL transaction, transferring funds from the merchant’s account to a customer’s account.
+
+# servers:
+#   - url: https://{CHECKOUT_HOST}
+#     description: Payment Platform Server
+#     variables:
+#       CHECKOUT_HOST:
+#         default: api.paymentplatform.com
+#         description: Base host for API calls
+
+paths:
+  /api/v1/payment/credit2virtual:
+    post:
+      summary: Credit2Virtual
+      operationId: credit2virtual
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Credit2VirtualRequest'
+            example:
+              action: CREDIT2VIRTUAL
+              client_key: CLIENT123KEY
+              channel_id: channel01
+              brand: AcmeBrand
+              order_id: 1613117050
+              order_amount: "100.00"
+              order_currency: USD
+              order_description: Test transaction for CREDIT2VIRTUAL
+              parameters: []
+              hash: d41d8cd98f00b204e9800998ecf8427e
+      responses:
+        '200':
+          description: CREDIT2VIRTUAL transaction response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Credit2VirtualResponse'
+              examples:
+                success:
+                  summary: Successful transaction
+                  value:
+                    action: CREDIT2VIRTUAL
+                    result: SUCCESS
+                    status: SETTLED
+                    order_id: 1613117050
+                    trans_id: e5098d62-6d08-11eb-9da3-0242ac120013
+                    trans_date: "2021-02-12 08:04:15"
+                    amount: "0.19"
+                    currency: USD
+                declined:
+                  summary: Declined transaction
+                  value:
+                    action: CREDIT2VIRTUAL
+                    result: DECLINED
+                    status: DECLINED
+                    order_id: 1613117050
+                    trans_id: e5098d62-6d08-11eb-9da3-0242ac120013
+                    trans_date: "2021-02-12 08:04:15"
+                    decline_reason: Declined by processing
+                    amount: "0.19"
+                    currency: USD
+                undefined:
+                  summary: Undefined transaction
+                  value:
+                    action: CREDIT2VIRTUAL
+                    result: UNDEFINED
+                    status: PREPARE
+                    order_id: 1613117050
+                    trans_id: e5098d62-6d08-11eb-9da3-0242ac120013
+                    trans_date: "2021-02-12 08:04:15"
+                    amount: "0.19"
+                    currency: USD
+
+components:
+  schemas:
+    Credit2VirtualRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - brand
+        - order_id
+        - order_amount
+        - order_currency
+        - order_description
+        - parameters
+        - hash
+      properties:
+        action:
+          type: string
+          enum: [CREDIT2VIRTUAL]
+          description: The type of action to perform
+          example: CREDIT2VIRTUAL
+        client_key:
+          type: string
+          description: Unique client key (CLIENT_KEY)
+          example: CLIENT123KEY
+        channel_id:
+          type: string
+          maxLength: 16
+          description: Sub-account/channel ID
+          example: channel01
+        brand:
+          type: string
+          maxLength: 36
+          description: Brand through which the transaction is performed
+          example: AcmeBrand
+        order_id:
+          type: string
+          maxLength: 255
+          description: Order ID in the client's system
+          example: 1613117050
+        order_amount:
+          type: string
+          description: Order amount, formatted according to currency rules
+          example: "100.00"
+        order_currency:
+          type: string
+          maxLength: 3
+          description: Currency code (e.g., USD)
+          example: USD
+        order_description:
+          type: string
+          maxLength: 1024
+          description: Description of the transaction or product
+          example: Test transaction for CREDIT2VIRTUAL
+        parameters:
+          type: array
+          description: Array of brand-specific parameters
+          items:
+            type: object
+          example: []
+        hash:
+          type: string
+          description: Request signature hash for validation
+          example: d41d8cd98f00b204e9800998ecf8427e
+
+    Credit2VirtualResponse:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+        - trans_date
+        - amount
+        - currency
+      properties:
+        action:
+          type: string
+          example: CREDIT2VIRTUAL
+        result:
+          type: string
+          enum: [SUCCESS, DECLINED, UNDEFINED]
+          description: Result of the transaction
+        status:
+          type: string
+          description: Status of the transaction
+          example: SETTLED
+        order_id:
+          type: string
+          example: 1613117050
+        trans_id:
+          type: string
+          example: e5098d62-6d08-11eb-9da3-0242ac120013
+        trans_date:
+          type: string
+          format: date-time
+          example: 2021-02-12 08:04:15
+        amount:
+          type: string
+          example: "0.19"
+        currency:
+          type: string
+          example: USD
+        decline_reason:
+          type: string
+          description: Reason for decline, shown only if result is DECLINED
+          example: Declined by processing
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: INVALID_REQUEST
+        message:
+          type: string
+          description: Human-readable error message
+          example: The request is missing required fields.

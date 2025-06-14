@@ -1,0 +1,73 @@
+---
+id: recurring-create-schedule
+title: "Create Recurring Schedule"
+description: "This action creates a RETRY transaction and may update the payment status."
+sidebar_label: "Create Recurring Schedule"
+hide_title: true
+hide_table_of_contents: true
+api: eJzNVU1PIzkQ/Sulusyu1IEkZJihb1lgJE5EkDmsQoQcu5r2bLfd+ANoRfnvq3InJJklw3DbXDruriq/evX8vMQgHjzmM7wd3sK5cArnGdqGnAjamiuFOTqS0TltHu6lIxHo3suSVKwIM1TkpdMNx2KO01J7EJJX0MV6EHBzOb35G4ITxq+/CaOgFi3ERolAEEqCRrQ1mQA+iBD90Z25CqA9hLbRUlRVC9GTgsI68CStUcK18Apsk+1BFIEcCPC2CKBIVtrQ0Z3BDB09RvLhL6tazJdpqR0pzIOLlKG0JpAJ/Ek0TaVl6v/4pff8/NwrrKt70VVkpFWcs0TmoBb8L7QNYY528YNkWG/UVZ5h1y9mKCtNJtz/Qy1mmKi41wozLIUvmfHGMedBk08IurRtcR+4TcyQTKy5cOKUE+lF1E3FMd2rn0fyTb+QgidRRYK7LuYOcbWH6I19uGMRMMcYE879ot+NfowEXQnQikzQhSaHu3gGwxMafT790qOvZ4veYKhOemL0+bQ3Gp6eDkaDL6N+v89AXtn4MIxpSXB1AbZICtqqYVdqwYKj4No9aMP3oJ2dnTG0NJ03YO3DuOmUxSRrlWQDXj8YEaIj+MMTwbhpyCj9AuMMvllXx0rA4M89SGIhFRWD4Qnj+nrWx1X6sZx8Y43vhDHs9/mxv/9ta2TprLHRwyYaCmfr10PVVCIwlXhQ5z98p7fDsv5thf4kyK6FWIVfB4/Pzy8n08sLjrdOkTugiG3G9c1Fr98fDIbD/0zkmguwNLRJ0qjJyVKY8MmDb32g+qO6+6h0NsOrKZSWPbSxPpEoQok5Hq+X2hQ2ba9DKj5Zz2uynhf01uY53VH0eHKFGT6R812zg6P+Uf9tKx5PrthEk3VuDgIU0SgPshTugQ/Lu5aqDUjhiY/ZnqvCNB26Tvvag2fkgg1/cn07TR4vheGNzMOex3/yUGgjqq3X8ziYklokSRlRMxvn6QaBm1dItwfuneVW1f/rK2itskAv4biphE59R1dxB50yZp1Q5hmW/MxnuFwuhKfvrlqt+PVjJNdiPptn+CScFgvWzWzOXkVCkcN8tsTk6XjecdKb8q4cXsVkNO/ebqtsU2IsJTXhQHKyjNV8R+Q8d8xwsb5ia6s4Z6dytrtg2KvVv/Tz5Uo=
+sidebar_class_name: "post api-method"
+info_path: docs/requests/s2s_card/payment-platform-retry-transaction-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Create Recurring Schedule"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/post"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+This action creates a RETRY transaction and may update the payment status.
+It is typically used for secondary recurring payments after a soft decline.
+
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"required":true,"content":{"application/x-www-form-urlencoded":{"schema":{"type":"object","required":["action","client_key","trans_id","hash"],"properties":{"action":{"type":"string","enum":["RETRY"],"example":"RETRY","description":"Fixed value \"RETRY\""},"client_key":{"type":"string","format":"uuid","description":"Unique client identifier","example":"123e4567-e89b-12d3-a456-426614174000"},"trans_id":{"type":"string","format":"uuid","description":"The ID of the recurring transaction to retry","example":"223e4567-e89b-12d3-a456-426614174999"},"hash":{"type":"string","description":"Request validation signature (see Appendix A, Formula 1)","example":"abcdef1234567890"}}}}}}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Synchronous response from payment platform","content":{"application/json":{"schema":{"type":"object","properties":{"action":{"type":"string","example":"RETRY"},"result":{"type":"string","example":"ACCEPTED"},"order_id":{"type":"string","example":"ORD-001122","description":"Order ID in the merchant's system"},"trans_id":{"type":"string","format":"uuid","example":"223e4567-e89b-12d3-a456-426614174999"}}}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

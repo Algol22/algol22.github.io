@@ -1,0 +1,71 @@
+---
+id: recurring-pause-schedule
+title: "Pause Recurring Schedule"
+description: "Suspends the schedule and assigns value 'Y' for the 'paused' parameter."
+sidebar_label: "Pause Recurring Schedule"
+hide_title: true
+hide_table_of_contents: true
+api: eJytVV1v2kAQ/CurfWolmwChafEbpakaqVJRHB4qQOjwLfha++zcRwJC/u/VniENaZO2UnkxB7uzs7Nz6z06sbGYzDDtpzAWRuIiwqomI5yq9JXEBA1l3hilN8taeEtLm+UkfUEYoSSbGVVzKCaYeluTlhZcTnCMAqElCGvVRlu4E4UnmOPXOcK6MiFwjgFWzhFqYURJjkwHIzR068m695XcYbIPR2VIYuKMpwizSjvSjv8SdV2oLBA+28b39/fxujJl7E1BOqsk5+yR+ZSCv7ldTZhgtfpGmTsUapFnKLLQS4RZoUi75XfaYYTHXpZKYoS5sDmrVBvWySmygUSb+RPfOtYMIyTtS8aejKbp5TIdf7r8MP18yQin8n1UW5IPEp1Gz5GBtqKsC8Z+AtWc8P0NBdZDOEzQ+9DCaeGpVree4DvtQEnSTq13Sm/CcFrYk9q9/jkN3ly8jendcBX3+vI8FoM3F/Ggf3HRG/TeDrrdLjN6LNo/U0qP7rn6AEoHKhOxK0k7mBTCcfIJqfN+72VSw+GQSYXZ/YbNafXr1nrAphXOG4JXlghGNdtbbWEUwcfKlL4QMHh9woPxH7J6/XPm9G7YFatM0hqb8GHH2brStjVOv9vlx9OrlGVk7doXEG4HHFPwWed/s639njf6Xxv2BZ8Zsr5wL2el0/H4Mk0P7TYRluTyildJXdlARLgcEzw7HJVeVwFRubbqk0lDDJMgwoMrRpMrjPCOjG3l6nW6ne4vY7zJleVQUBZ4w4CrDmoKqA81ji7twJUDS84+u5M4O2yuDtzkPJDWI8pCKSTBnRIw+ZLewCvqbDoReMt3aPJpAuPp9efXnblm+bjjUgTVtSjbZpnQ9XHHPvT4tJv9z7n/50V7GKSjrTurC6ECUW8KrtlOatYObhFhzs9khvv9SliamqJp+OdbT2aHyWwR4Z0wSqx4jrMFXzgSkgwmsz2G3YTjtov4hqtyeOG5+p93eBMdIUZZRrV7Jjlcg2bxyHQ8FYxwdXiRlJXknEfI0eMD026aH9h0YtU=
+sidebar_class_name: "post api-method"
+info_path: docs/requests/s2s_card/payment-platform-pause-schedule-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Pause Recurring Schedule"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/post"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Suspends the schedule and assigns value "Y" for the "paused" parameter.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"required":true,"content":{"application/x-www-form-urlencoded":{"schema":{"type":"object","required":["action","client_key","schedule_id","hash"],"properties":{"action":{"type":"string","enum":["PAUSE_SCHEDULE"],"description":"Fixed value \"PAUSE_SCHEDULE\"","example":"PAUSE_SCHEDULE"},"client_key":{"type":"string","format":"uuid","description":"Unique key identifying the client","example":"123e4567-e89b-12d3-a456-426614174000"},"schedule_id":{"type":"string","format":"uuid","description":"Schedule ID in the Payment Platform","example":"321e4567-e89b-12d3-a456-426614174999"},"hash":{"type":"string","description":"Request signature (see Appendix A, Formula 4)","example":"hashsignature1234567890abcdef"}}}}}}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Successful pause response","content":{"application/json":{"schema":{"type":"object","properties":{"action":{"type":"string","example":"PAUSE_SCHEDULE"},"result":{"type":"string","example":"SUCCESS"}}}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

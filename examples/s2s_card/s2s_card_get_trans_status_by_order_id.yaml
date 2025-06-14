@@ -1,0 +1,102 @@
+openapi: 3.0.3
+info:
+  title: Payment Platform API
+  version: 1.0.0
+  description: API to get the status of the most recent transaction within an order.
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Get Transaction Status by Order ID
+      operationId: get_trans_status_by_order_id
+      description: |
+        Gets the status of the most recent transaction in the order's transaction subsequence from the Payment Platform.
+        This is sent in the background using a POST request (e.g., via PHP cURL).
+        
+        ⚠️ It is recommended to pass a unique `order_id` to help uniquely identify the payment, especially when cascading is configured.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - action
+                - client_key
+                - order_id
+                - hash
+              properties:
+                action:
+                  type: string
+                  enum: [GET_TRANS_STATUS_BY_ORDER]
+                  example: GET_TRANS_STATUS_BY_ORDER
+                  description: Action to perform
+                client_key:
+                  type: string
+                  format: uuid
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                  description: Unique key provided to the client
+                order_id:
+                  type: string
+                  example: "1646655381neural"
+                  description: Transaction ID in the Merchant's system
+                hash:
+                  type: string
+                  example: "e3b0c44298fc1c149afbf4c8996fb924"
+                  description: Signature to validate the request
+      responses:
+        '200':
+          description: Transaction status response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - action
+                  - result
+                  - status
+                  - order_id
+                  - trans_id
+                properties:
+                  action:
+                    type: string
+                    example: GET_TRANS_STATUS_BY_ORDER
+                    description: Returned action
+                  result:
+                    type: string
+                    enum: [SUCCESS]
+                    example: SUCCESS
+                    description: Result of the status check
+                  status:
+                    type: string
+                    enum: [3DS, REDIRECT, PENDING, PREPARE, DECLINED, SETTLED, REVERSAL, REFUND, VOID, CHARGEBACK]
+                    example: SETTLED
+                    description: Transaction status
+                  order_id:
+                    type: string
+                    example: "1646655381neural"
+                    description: Transaction ID in the Merchant's system
+                  trans_id:
+                    type: string
+                    format: uuid
+                    example: "66624eba-9e10-11ec-aa41-0242ac130002"
+                    description: Transaction ID in the Payment Platform
+                  decline_reason:
+                    type: string
+                    example: "Insufficient funds"
+                    description: Reason of transaction decline (for DECLINED status)
+                  recurring_token:
+                    type: string
+                    example: "abc123recurringtoken"
+                    description: Token for recurring payments
+                  schedule_id:
+                    type: string
+                    example: "recurring-sched-001"
+                    description: Schedule ID for recurring payments
+                  digital_wallet:
+                    type: string
+                    enum: [googlepay, applepay]
+                    example: googlepay
+                    description: Wallet provider if digital wallet was used

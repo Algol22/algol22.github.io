@@ -1,0 +1,159 @@
+openapi: 3.0.3
+info:
+  title: CAPTURE API
+  version: 1.0.0
+  description: |
+    CAPTURE request is used to submit a previously authorized transaction.
+    The funds held by a SALE (auth = Y) transaction will be transferred to the merchant’s account.
+tags:
+  - name: S2S Card
+    description: Server-to-server Card Payment Requests (SALE and CAPTURE)
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Capture Authorized
+      operationId: capture
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CaptureRequest'
+      responses:
+        '200':
+          description: Capture transaction response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/CaptureSuccessResponse'
+                  - $ref: '#/components/schemas/CaptureDeclinedResponse'
+                  - $ref: '#/components/schemas/CaptureUndefinedResponse'
+                discriminator:
+                  propertyName: result
+                  mapping:
+                    SUCCESS: '#/components/schemas/CaptureSuccessResponse'
+                    DECLINED: '#/components/schemas/CaptureDeclinedResponse'
+                    UNDEFINED: '#/components/schemas/CaptureUndefinedResponse'
+
+components:
+  schemas:
+    CaptureRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - trans_id
+        - amount
+        - hash
+      properties:
+        action:
+          type: string
+          enum: [CAPTURE]
+          example: CAPTURE
+        client_key:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        trans_id:
+          type: string
+          format: uuid
+          example: 789e1234-e89b-12d3-a456-426614174999
+        amount:
+          type: string
+          description: |
+            Format depends on currency.
+            Examples:
+            - Zero-exponent: `1000`
+            - 2-exp: `100.00`
+            - 3-exp: `100.999`
+            - 4-exp: `100.9999`
+        hash:
+          type: string
+          description: Special signature to validate your request
+
+    CaptureSuccessResponse:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [CAPTURE]
+        result:
+          type: string
+          enum: [SUCCESS]
+        status:
+          type: string
+          enum: [SETTLED]
+        amount:
+          type: string
+        order_id:
+          type: string
+        trans_id:
+          type: string
+          format: uuid
+        trans_date:
+          type: string
+          format: date-time
+        descriptor:
+          type: string
+        currency:
+          type: string
+
+    CaptureDeclinedResponse:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [CAPTURE]
+        result:
+          type: string
+          enum: [DECLINED]
+        status:
+          type: string
+          enum: [PENDING]
+        order_id:
+          type: string
+        trans_id:
+          type: string
+          format: uuid
+        trans_date:
+          type: string
+          format: date-time
+        descriptor:
+          type: string
+        amount:
+          type: string
+        currency:
+          type: string
+        decline_reason:
+          type: string
+
+    CaptureUndefinedResponse:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [CAPTURE]
+        result:
+          type: string
+          enum: [UNDEFINED]
+        status:
+          type: string
+          enum: [PENDING]
+        order_id:
+          type: string
+        trans_id:
+          type: string
+          format: uuid
+        trans_date:
+          type: string
+          format: date-time
+        descriptor:
+          type: string
+        amount:
+          type: string
+        currency:
+          type: string

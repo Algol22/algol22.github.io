@@ -1,0 +1,71 @@
+---
+id: recurring-run-schedule
+title: "Run Recurring Schedule"
+description: "Run Recurring Schedule"
+sidebar_label: "Run Recurring Schedule"
+hide_title: true
+hide_table_of_contents: true
+api: eJyVVdtu2kAQ/ZXRPLWSTYAQUvyW0lSJFLUoDk+A0OId8Lb22tlLAkL+92psSOK0SVu/2Gvvuczs2fUendhYjGYY92MYCyNxEWBRkhFOFfpaYoSGEm+M0pul8Xppk5SkzwgDNHTvybrPhdxhtK+HypDEyBlPASaFdqQdfxJlmamkpjzZho+Pj+G6MHnoTUY6KSRj9sjMueAntysJIyxWPyhxB6GGeYYiYRYMMMkUabf8STsM8OhqqSQGmAqbch2l4UqcIlubaJDP/NZxVRggaZ8z9+302zIeX11+md5cMl6STYwqGxh+VVuS8CAyTzBvzZ0jk2xFXmbM26KpWk7/IM6dEA4j9L423xadanXvCX7SDpQk7dR6p/QGXErQ0LaUe/1TGpwNz0P6NFqFvb48DcXgbBgO+sNhb9A7H3S7XXb0sl3/bSk+gOH6CyhdW5mIXU7awSQTjsEtU6f93vumRqMRm6pX7Q9u2uq3TejAqo0WzhuCD5YILsqStFRbuAjga2FynwkYfGz5YP4nVHf06Xx4Njjt99Ykk5XAqr44a7YstG0i0+92+faqfp8kZO3aZ2DI+pzgiME3Q//DNsl7O+P/nNU3Y8ZmMvc+Jp6Ox5dxfKi2+q25XsPtcbtD/LzVc3JpwYdBWdjarXApRnhyGCq9Lmph5WqZ13mAEJj6KTkXk2sM8IGMbXR7nW6n+9tS36XK8lRQFrwlCa44dlxAKepX5UHpmOgOXDuw5Gydyzk20+YIpTAiJ0eGWeb4bY4duEt57Zo8KQu5kAQPSsDke3wHH6iz6QTgLbdicjWB8fT25mNnrrnXXHcu6gXSIqf3Wteq6WltHG3dSZkJVdN5k/G3pquzpsmLAFO+RzPc71fC0tRkVcWv7z2ZHUazRYAPwiix4p7PFryFSEgyGM32WJ82OG7iGN6xKk/PPKv//TyugiPFRZJQ6d4A17muFi8Cwr3DAFeHn0JeSMa8YA5eDth2Vf0C7mYw0w==
+sidebar_class_name: "post api-method"
+info_path: docs/requests/s2s_card/payment-platform-run-schedule-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Run Recurring Schedule"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/post"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Run Recurring Schedule
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"required":true,"content":{"application/x-www-form-urlencoded":{"schema":{"type":"object","required":["action","client_key","schedule_id","hash"],"properties":{"action":{"type":"string","enum":["RUN_SCHEDULE"],"description":"Fixed value \"RUN_SCHEDULE\"","example":"RUN_SCHEDULE"},"client_key":{"type":"string","format":"uuid","description":"Unique key identifying the client","example":"123e4567-e89b-12d3-a456-426614174000"},"schedule_id":{"type":"string","format":"uuid","description":"Schedule ID in the Payment Platform","example":"321e4567-e89b-12d3-a456-426614174999"},"hash":{"type":"string","description":"Request signature (see Appendix A, Formula 4)","example":"hashsignature0987654321fedcba"}}}}}}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Successful resume response","content":{"application/json":{"schema":{"type":"object","properties":{"action":{"type":"string","example":"RUN_SCHEDULE"},"result":{"type":"string","example":"SUCCESS"}}}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

@@ -1,0 +1,40 @@
+---
+id: card-2-card-api
+title: "CARD2CARD API"
+description: "**CARD2CARD protocol** creates a transfer transaction between two credit cards (Payer → Payee)."
+sidebar_label: Introduction
+sidebar_position: 0
+hide_title: true
+custom_edit_url: null
+---
+
+import ApiLogo from "@theme/ApiLogo";
+import Heading from "@theme/Heading";
+import SchemaTabs from "@theme/SchemaTabs";
+import TabItem from "@theme/TabItem";
+import Export from "@theme/ApiExplorer/Export";
+
+<span
+  className={"theme-doc-version-badge badge badge--secondary"}
+  children={"Version: 1.0.0"}
+>
+</span>
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"CARD2CARD API"}
+>
+</Heading>
+
+
+
+**CARD2CARD protocol** creates a transfer transaction between two credit cards (Payer → Payee).
+
+- Use `channel_id` to target a specific sub‑account when required.
+- All requests are sent via HTTP **POST** (e.g. with cURL).
+- Amount formatting rules: `XXXX.XX` (two‑decimal, even for zero‑exponent currencies like JPY → `100.00`).
+
+
+
+      

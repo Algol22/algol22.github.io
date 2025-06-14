@@ -1,0 +1,99 @@
+openapi: 3.0.3
+info:
+  title: GET_TRANS_STATUS API
+  version: 1.0.0
+  description: >
+    Endpoint to retrieve the current status of a transaction from the Payment Platform.
+    This is typically invoked via backend server requests (e.g., using PHP CURL).
+
+# servers:
+#   - url: https://{PAYMENT_API_HOST}
+#     description: Payment Platform API server
+#     variables:
+#       PAYMENT_API_HOST:
+#         default: api.paymentplatform.com
+
+paths:
+  /api/v1/payment/get_trans_status:
+    post:
+      summary: Get Transaction Status
+      operationId: get_trans_status
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GetTransStatusRequest'
+            example:
+              action: GET_TRANS_STATUS
+              client_key: "abc123-456-def789"
+              trans_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+              hash: "d41d8cd98f00b204e9800998ecf8427e"
+      responses:
+        '200':
+          description: Transaction status response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTransStatusResponse'
+
+components:
+  schemas:
+    GetTransStatusRequest:
+      type: object
+      required:
+        - action
+        - client_key
+        - trans_id
+        - hash
+      properties:
+        action:
+          type: string
+          enum: [GET_TRANS_STATUS]
+          example: GET_TRANS_STATUS
+        client_key:
+          type: string
+          description: Unique client key (UUID)
+          example: "abc123-456-def789"
+        trans_id:
+          type: string
+          description: Transaction ID in the Payment Platform
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        hash:
+          type: string
+          description: Signature to validate the request
+          example: "d41d8cd98f00b204e9800998ecf8427e"
+
+    GetTransStatusResponse:
+      type: object
+      required:
+        - action
+        - result
+        - status
+        - order_id
+        - trans_id
+      properties:
+        action:
+          type: string
+          example: GET_TRANS_STATUS
+        result:
+          type: string
+          enum: [SUCCESS]
+          example: SUCCESS
+        status:
+          type: string
+          enum: [REDIRECT, PREPARE, DECLINED, SETTLED, REFUND, VOID]
+          example: SETTLED
+        order_id:
+          type: string
+          description: Order ID in the client’s system
+          example: "ORD987654"
+        trans_id:
+          type: string
+          description: Transaction ID in the Payment Platform
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        decline_reason:
+          type: string
+          nullable: true
+          description: Reason for transaction decline (only if status is DECLINED)
+          example: "Insufficient funds"

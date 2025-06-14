@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: Payment Platform - Delete Schedule API
+  version: 1.0.0
+  description: >
+    This API is used to delete an existing payment schedule.
+    The request is sent via POST (e.g., using PHP CURL).
+
+paths:
+  /post:
+    post:
+      tags:
+        - S2S Card
+      summary: Delete Recurring Schedule
+      operationId: recurring_delete_schedule
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - action
+                - client_key
+                - schedule_id
+                - hash
+              properties:
+                action:
+                  type: string
+                  enum: [DELETE_SCHEDULE]
+                  description: Fixed value "DELETE_SCHEDULE"
+                  example: DELETE_SCHEDULE
+                client_key:
+                  type: string
+                  format: uuid
+                  description: Unique key identifying the client
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                schedule_id:
+                  type: string
+                  format: uuid
+                  description: Schedule ID in the Payment Platform
+                  example: "321e4567-e89b-12d3-a456-426614174999"
+                hash:
+                  type: string
+                  description: Request signature (see Appendix A, Formula 4)
+                  example: "hashsignatureabcdef1234567890"
+
+      responses:
+        '200':
+          description: Successful deletion response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    example: DELETE_SCHEDULE
+                  result:
+                    type: string
+                    example: SUCCESS

@@ -1,0 +1,71 @@
+---
+id: capture
+title: "Capture Authorized"
+description: "Capture Authorized"
+sidebar_label: "Capture Authorized"
+hide_title: true
+hide_table_of_contents: true
+api: eJztV19v4kYQ/yqreWolmxjCJYelPqTAVZEiLgrw0JIot9hDvFd717d/knAIqV+jX+8+yWm8hkADiVKp6T2EF+PZ+bfz+2k8swDLbwzEExi2hqzLdQpXAagSNbdCydMUYkh4aZ1GCEDjF4fG/qrSOcSL6lVoTCG22mEAiZIWpaUjXpa5SCofB/fh3d1dOFO6CJ3OUSYqJZsFmCTDgtM/Oy8RYlDTz5jYOpD3PAGekBcIIMkFSnv9J84hAKu5NNcihQB4oZwkq4ybjNIvNV3ACjRVKt7+IYqxWsgbCAClKyhC9+R8NL7okyne86LMSWslXG4F3uGFLsYtxOBclc6Di2brENvvjo5DfN+Zhs1Wehjy9rujsN06Omq2m8ftKIrI//ouL/J+/L6DzdZhe6/3TqdD3uvy7PCdokm0KH154EMViaVYokwNU5IlTmuUybxxKfs+rIkvZcj+QK1CvC+VRGlj9qkZRdEnOmiR1AsatehwQ9TpdCpZe1tGQkq0gu/ZNIclJoLnzIgbyYmXzCp2y3ORcotsrpxmNU1hSbUV1sPpSXyxPqJDjaZU0nietKKIHtvRajNWQeSZxFZWsJfxn40n3APBlcSPM4gnj6n+r8nq83f5TmhX2sNxt9sfDittY7l15knt/mh01u9V2vtoswxA6RT1Tr6+iMxrZULuSXVSCK0okGxWACm9M/6KtDsOH9Nh6JIEjblYIboMXhugXr97djqoa/48Quf9Qe908Ful/UPD8AR9nkCI3Ca5kHitkZtddd4BYs+bpP8jiuNBr//hDcb9GI1lirNtkK4CSAUFL4TkdfwapfmAF2RcFz6AgpcleY4X6462Y2p4a6U/VCt96G2vjtVbV/0vuupGm3t1RN867Ms7bP375wS9mmlPnM2UFl+R9ooCbaZo2yuVqdDkNoMYDupXIWeqSmMV1IPHTs5PIYBb1Mb7bjaiRvRoZl9p14M5E4Y5gylN7sZNC2EZZ6XGW6GcyeeMrxPbnLsbl3KUIZs52k4yzFM2nTPOhidnffYTmbBf2O8/b03qdyLP2bSe3meotY9pM2QF6iTj0n7762/DeJIQCA2/h9CVC15xV/rv0M6KbV1xDZDFe3tQ5lxUrpzOq89aVcyJr+1VABk94wksFlNucKzz5ZLEXxzqOcSTqwBuuRZ8SqWeEIMz5Cnqan+otlDo+sUjHFFUUs8dRX9+7abZyLs4SRIs7R7jaoOhT/SaF+cfhyMIYFrv/oVKyWbDc7D5Qmkvl98B/I+LMA==
+sidebar_class_name: "post api-method"
+info_path: docs/requests/s2s_card/capture-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Capture Authorized"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/post"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Capture Authorized
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"required":true,"content":{"application/x-www-form-urlencoded":{"schema":{"type":"object","required":["action","client_key","trans_id","amount","hash"],"properties":{"action":{"type":"string","enum":["CAPTURE"],"example":"CAPTURE"},"client_key":{"type":"string","format":"uuid","example":"123e4567-e89b-12d3-a456-426614174000"},"trans_id":{"type":"string","format":"uuid","example":"789e1234-e89b-12d3-a456-426614174999"},"amount":{"type":"string","description":"Format depends on currency.\nExamples:\n- Zero-exponent: `1000`\n- 2-exp: `100.00`\n- 3-exp: `100.999`\n- 4-exp: `100.9999`\n"},"hash":{"type":"string","description":"Special signature to validate your request"}},"title":"CaptureRequest"}}}}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Capture transaction response","content":{"application/json":{"schema":{"oneOf":[{"type":"object","properties":{"action":{"type":"string","enum":["CAPTURE"]},"result":{"type":"string","enum":["SUCCESS"]},"status":{"type":"string","enum":["SETTLED"]},"amount":{"type":"string"},"order_id":{"type":"string"},"trans_id":{"type":"string","format":"uuid"},"trans_date":{"type":"string","format":"date-time"},"descriptor":{"type":"string"},"currency":{"type":"string"}},"title":"CaptureSuccessResponse"},{"type":"object","properties":{"action":{"type":"string","enum":["CAPTURE"]},"result":{"type":"string","enum":["DECLINED"]},"status":{"type":"string","enum":["PENDING"]},"order_id":{"type":"string"},"trans_id":{"type":"string","format":"uuid"},"trans_date":{"type":"string","format":"date-time"},"descriptor":{"type":"string"},"amount":{"type":"string"},"currency":{"type":"string"},"decline_reason":{"type":"string"}},"title":"CaptureDeclinedResponse"},{"type":"object","properties":{"action":{"type":"string","enum":["CAPTURE"]},"result":{"type":"string","enum":["UNDEFINED"]},"status":{"type":"string","enum":["PENDING"]},"order_id":{"type":"string"},"trans_id":{"type":"string","format":"uuid"},"trans_date":{"type":"string","format":"date-time"},"descriptor":{"type":"string"},"amount":{"type":"string"},"currency":{"type":"string"}},"title":"CaptureUndefinedResponse"}],"discriminator":{"propertyName":"result","mapping":{"SUCCESS":{"type":"object","properties":{"action":{"type":"string","enum":["CAPTURE"]},"result":{"type":"string","enum":["SUCCESS"]},"status":{"type":"string","enum":["SETTLED"]},"amount":{"type":"string"},"order_id":{"type":"string"},"trans_id":{"type":"string","format":"uuid"},"trans_date":{"type":"string","format":"date-time"},"descriptor":{"type":"string"},"currency":{"type":"string"}},"title":"CaptureSuccessResponse"},"DECLINED":{"type":"object","properties":{"action":{"type":"string","enum":["CAPTURE"]},"result":{"type":"string","enum":["DECLINED"]},"status":{"type":"string","enum":["PENDING"]},"order_id":{"type":"string"},"trans_id":{"type":"string","format":"uuid"},"trans_date":{"type":"string","format":"date-time"},"descriptor":{"type":"string"},"amount":{"type":"string"},"currency":{"type":"string"},"decline_reason":{"type":"string"}},"title":"CaptureDeclinedResponse"},"UNDEFINED":{"type":"object","properties":{"action":{"type":"string","enum":["CAPTURE"]},"result":{"type":"string","enum":["UNDEFINED"]},"status":{"type":"string","enum":["PENDING"]},"order_id":{"type":"string"},"trans_id":{"type":"string","format":"uuid"},"trans_date":{"type":"string","format":"date-time"},"descriptor":{"type":"string"},"amount":{"type":"string"},"currency":{"type":"string"}},"title":"CaptureUndefinedResponse"}}}}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

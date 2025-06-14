@@ -1,0 +1,176 @@
+openapi: 3.0.3
+info:
+  title: Payment Void API
+  version: 1.0.0
+  description: >
+    Endpoint to void a settled payment made on the same financial day using payment public ID.
+
+# servers:
+#   - url: https://{CHECKOUT_HOST}
+#     description: Payment Platform API server
+#     variables:
+#       CHECKOUT_HOST:
+#         default: api.paymentplatform.com
+#         description: Hostname for the Payment Platform API
+
+paths:
+  /api/v1/payment/void:
+    post:
+      summary: Void
+      operationId: void
+      description: >
+        Void request is allowed only for payments in SETTLED status performed on the same financial day.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoidRequest'
+            example:
+              merchant_key: xxxxx-xxxxx-xxxxx
+              payment_id: 63c781cc-de3d-11eb-a1f1-0242ac130006
+              hash: "{{operation_hash}}"
+      responses:
+        '200':
+          description: Void request response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VoidResponse'
+              examples:
+                success:
+                  summary: Void successful response
+                  value:
+                    status: SUCCESS
+                    payment_status: void
+                    payment_id: dc66cdd8-d702-11ea-9a2f-0242c0a87002
+                    date: "2020-08-05 07:41:10"
+                    order:
+                      number: order-1234
+                      amount: "0.19"
+                      currency: USD
+                      description: very important gift
+                failure:
+                  summary: Void failed response
+                  value:
+                    status: FAIL
+                    payment_status: settled
+                    payment_id: dc66cdd8-d702-11ea-9a2f-0242c0a87002
+                    date: "2020-08-05 07:41:10"
+                    reason: Declined by processing
+                    order:
+                      number: order-1234
+                      amount: "0.19"
+                      currency: USD
+                      description: very important gift
+        '400':
+          description: Bad request - missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid merchant key or hash
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    VoidRequest:
+      type: object
+      required:
+        - merchant_key
+        - payment_id
+        - hash
+      properties:
+        merchant_key:
+          type: string
+          description: Key for Merchant identification
+          example: xxxxx-xxxxx-xxxxx
+        payment_id:
+          type: string
+          maxLength: 255
+          description: Payment ID (public)
+          example: dc66cdd8-d702-11ea-9a2f-0242c0a87002
+        hash:
+          type: string
+          description: >
+            Signature to validate the request.
+            Must be SHA1 of MD5 encoded string (uppercased): payment_id + merchant_pass
+          example: "A1B2C3D4E5F67890123456789ABCDEF123456789"
+
+    VoidResponse:
+      type: object
+      required:
+        - status
+        - payment_status
+        - payment_id
+        - date
+        - order
+      properties:
+        status:
+          type: string
+          description: Status of the void operation (SUCCESS or FAIL)
+          example: SUCCESS
+        payment_status:
+          type: string
+          description: Payment status after the operation (e.g. VOID, SETTLED)
+          example: void
+        payment_id:
+          type: string
+          maxLength: 255
+          description: Transaction ID (public)
+          example: dc66cdd8-d702-11ea-9a2f-0242c0a87002
+        date:
+          type: string
+          format: date-time
+          description: Transaction date in YYYY-MM-DD hh:mm:ss format
+          example: "2020-08-05 07:41:10"
+        reason:
+          type: string
+          description: Decline or error reason if operation failed
+          example: The operation was rejected. Please contact the site support
+        order:
+          type: object
+          required:
+            - number
+            - amount
+            - currency
+            - description
+          properties:
+            number:
+              type: string
+              maxLength: 255
+              description: Order ID
+              example: order-1234
+            amount:
+              type: string
+              description: Product price
+              example: "0.19"
+            currency:
+              type: string
+              maxLength: 3
+              description: Currency
+              example: USD
+            description:
+              type: string
+              maxLength: 1024
+              description: Product name
+              example: very important gift
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: invalid_request
+        message:
+          type: string
+          description: Human-readable error message
+          example: Missing required parameter 'payment_id'.
