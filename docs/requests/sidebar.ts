@@ -178,6 +178,11 @@ const sidebars: SidebarsConfig = {
         }   
       ],
   "Checkout": [
+     {
+          type: "doc",
+          id: "requests/checkout/payment-checkout-api",
+          label: "Payment Platform API Info"
+       },
        {
           type: "doc",
           id: "requests/checkout/sale",

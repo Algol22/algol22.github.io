@@ -7,8 +7,8 @@ import type * as Plugin from "@docusaurus/types/src/plugin";
 import type * as OpenApiPlugin from "docusaurus-plugin-openapi-docs";
 
 const config: Config = {
-  title: "My Site",
-  tagline: "Dinosaurs are cool",
+  title: "API Documentation",
+  tagline: "API Documentation",
   url: "https://your-docusaurus-test-site.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -55,7 +55,7 @@ const config: Config = {
       },
     },
     navbar: {
-      title: "My Site",
+      title: "Main",
       logo: {
         alt: "My Site Logo",
         src: "img/logo.svg",
@@ -84,7 +84,7 @@ const config: Config = {
         },
         {
           label: 'Español',
-          href: 'https://another-website.com', // Replace with your target Spanish site
+          href: 'https://es-docs.rafinita.com/checkout_integration', // Replace with your target Spanish site
         },
       ],
     },
