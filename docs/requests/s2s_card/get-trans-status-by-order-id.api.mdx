@@ -36,11 +36,10 @@ import Heading from "@theme/Heading";
 
 
 
-Gets the status of the most recent transaction in the order's transaction subsequence from the Payment Platform.
-This is sent in the background using a POST request (e.g., via PHP cURL).
-
-⚠️ It is recommended to pass a unique `order_id` to help uniquely identify the payment, especially when cascading is configured.
-
+Gets the status of the most recent transaction in the order's transaction subsequence.
+:::info 🔗 Related S2S Transaction Status by order_id: 
+[Request parameters](/docs/guides/s2s_card#get_trans_status_by_order-request) · [Response parameters](/docs/guides/s2s_card#response-parameters-9) · [Hash](/docs/guides/s2s_card#appendix-a-hash) 
+:::
 
 <Heading
   id={"request"}

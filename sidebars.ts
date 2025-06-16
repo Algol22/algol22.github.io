@@ -17,6 +17,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "category",
       label: "CHECKOUT INTEGRATION",
+      collapsed: true,
       items: [
          "guides/checkout_integration", // <-- this file exists, good!
         "guides/checkout_methods"
@@ -26,6 +27,7 @@ const sidebars: SidebarsConfig = {
         {
       type: "category",
       label: "S2S APM",
+      collapsed: true,
       items: [
          "guides/s2s_apm", // <-- this file exists, good!
         "guides/s2s_apm_brands"
