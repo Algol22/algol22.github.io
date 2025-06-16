@@ -1,6 +1,6 @@
 ---
 id: checkout_integration
-title: Checkout Integration flow
+title: CHECKOUT INTEGRATION
 ---
 
 # Checkout Integration

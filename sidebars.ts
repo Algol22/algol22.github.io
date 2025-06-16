@@ -13,13 +13,27 @@
 import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 
 const sidebars: SidebarsConfig = {
-  guidesSidebar: [
-    // Direct list of docs without a wrapping category
-    "guides/checkout_integration",
-    "guides/s2s_card",
-    "guides/s2s_apm",
-    "guides/sdk_checkout",
-    "guides/plugins"
+ guidesSidebar: [
+    {
+      type: "category",
+      label: "CHECKOUT INTEGRATION",
+      items: [
+         "guides/checkout_integration", // <-- this file exists, good!
+        "guides/checkout_methods"
+      ]
+    },
+     "guides/s2s_card",
+        {
+      type: "category",
+      label: "S2S APM",
+      items: [
+         "guides/s2s_apm", // <-- this file exists, good!
+        "guides/s2s_apm_brands"
+      ]
+    },
+     "guides/plugins",
+    "guides/sdk_checkout"
+   
   ],
   openApiSidebar: [
     {
