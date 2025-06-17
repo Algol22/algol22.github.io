@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocusaurus_template_openapi_docs=self.webpackChunkdocusaurus_template_openapi_docs||[]).push([[2634],{29179:(e,u,s)=>{s.r(u),s.d(u,{default:()=>c});var t=s(56347),a=s(74848);function c(){return(0,a.jsx)(t.rd,{to:"/docs/guides/checkout_integration"})}}}]);
